@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap');
 
+
 :root {
   --bg-main: #0a0a0a;
   --bg-card: rgba(255, 255, 255, 0.02);
@@ -8,9 +9,17 @@
   --text-pure: #ffffff;
   --text-muted: #8a8a8a;
   --text-dim: #666666;
-  --accent-gold: #d4af37;
+  --accent-gold: #d4af37; 
   --font-display: 'Syne', sans-serif;
   --font-body: 'Inter', sans-serif;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-xxl: 2.5rem;
+  --space-huge: 4rem;
+  --space-mega: 6.25rem;
 }
 
 *, *::before, *::after {
@@ -20,6 +29,7 @@
 }
 
 html {
+  font-size: 100%;
   background-color: var(--bg-main);
   color: var(--text-pure);
   font-family: var(--font-body);
@@ -45,7 +55,7 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 0.5rem;
 }
 
 ::-webkit-scrollbar-track {
@@ -54,9 +64,5 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--border-muted);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-dim);
+  border-radius: 0.25rem;
 }
