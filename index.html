@@ -4,12 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/serviceModal.css">
     <link rel="stylesheet" href="css/section-services.css">
     <link rel="stylesheet" href="css/section-benefits.css">
 
     <title>Perfect-Finish-Detail</title>
 </head>
+
 <body>
+
+    <div id="service-modal" class="modal-overlay" aria-hidden="true">
+        <article class="modal-window">
+            
+            <div class="modal-top-bar">
+            <nav class="modal-breadcrumbs" aria-label="Breadcrumb">
+                <span class="crumb-root">Home</span>
+                <span class="crumb-sep">/</span>
+                <span class="crumb-active">Package</span>
+            </nav>
+            <button id="close-modal-btn" class="modal-close-trigger">[ CLOSE ]</button>
+            </div>
+
+            <div class="modal-scroll-frame">
+            
+            <header class="modal-hero-banner">
+                <div id="modal-hero-img" class="hero-image-src" style="background-image: url('assets/enhancement-hero.jpg');"></div>
+            </header>
+
+            <div class="modal-content-grid">
+                
+                <div class="modal-main-column">
+                <section class="overview-block">
+                    <h2 id="modal-package-title" class="syne-heading">Enhancement Valet</h2>
+                    <p id="modal-package-overview" class="inter-subheading">
+                    A meticulous, multi-stage machine treatment engineered specifically for newer vehicles or well-maintained paintwork showing signs of dullness and light surface degradation. This process clears away up to 60% of superficial micro-scratches and wash-hazing, permanently optical-clarifying the clear coat to restore a crisp, high-gloss factory reflection.
+                    </p>
+                </section>
+
+                <section class="process-block">
+                    <h3 class="modal-section-title">Process Breakdown</h3>
+                    <div id="modal-process-container" class="process-stack">
+                    </div>
+                </section>
+                </div>
+
+                <aside class="modal-sidebar-column">
+                
+                <div class="sidebar-widget">
+                    <h3 class="modal-section-title">Quick Highlights</h3>
+                    <ul id="modal-highlights-list" class="highlights-list">
+                    </ul>
+                </div>
+
+                <div class="sidebar-widget">
+                    <h3 class="modal-section-title">Time Allocation</h3>
+                    <p id="modal-duration-val" class="metadata-text-heavy">2 TO 3 DAYS</p>
+                </div>
+
+                <div class="sidebar-widget">
+                    <h3 class="modal-section-title">Pricing Matrix</h3>
+                    <div class="binary-pricing-row">
+                    <div class="price-tier">
+                        <span class="tier-label">Small to Medium</span>
+                        <span id="price-sm-val" class="tier-cost">R1 200</span>
+                    </div>
+                    <div class="price-tier">
+                        <span class="tier-label">Large Footprint</span>
+                        <span id="price-lg-val" class="tier-cost">R1 650</span>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-action-footer">
+                    <button id="modal-reserve-trigger" class="reserve-action-btn">
+                    <span class="btn-label">Reserve This Package</span>
+                    <span class="btn-underline"></span>
+                    </button>
+                </div>
+
+                </aside>
+
+            </div>
+            </div>
+        </article>
+    </div>
 
     <section class="services-section">
         <div class="services-header">
@@ -102,5 +180,6 @@
         </div>
     </section>
 
+    <script src="js/serviceModal.js" defer></script>
 </body>
 </html>
