@@ -90,36 +90,40 @@
     </div>
 
     <section class="services-section">
-        <div class="services-header">
-            <h2 class="syne-heading">Our Services</h2>
-            <p class="inter-subheading">Two transparent tiers of restoration. No rushed assembly lines, no shortcuts—just pure attention to detail.</p>
-        </div>
+    <div class="services-header">
+        <h2>Our Services</h2>
+        <p>Three transparent tiers of restoration. No rushed assembly lines, no shortcuts—just pure attention to detail.</p>
+    </div>
 
-        <div class="services-grid">
-            <div class="service-card">
-            <div class="service-image-placeholder" style="background-image: url('assets/enhancement.jpg');"></div>
-            <div class="service-content">
-                <h3 class="service-title">ENHANCEMENT VALET</h3>
-                <p class="service-description">Perfect for maintaining depth, removing light road grime, and adding a layer of protection.</p>
-                <div class="service-footer">
-                    <span class="action-text">VIEW DETAILS</span>
-                    <span class="action-arrow">→</span>
-                </div>
+    <div class="services-grid">
+        
+        <div class="service-card" onclick="openServiceModal('enhancement')" role="button" tabindex="0" aria-label="Open Enhancement Valet details">
+        <div class="service-image-placeholder">
             </div>
-            </div>
-
-            <div class="service-card">
-            <div class="service-image-placeholder" style="background-image: url('assets/interior.jpg');"></div>
-            <div class="service-content">
-                <h3 class="service-title">INTERIOR VALET</h3>
-                <p class="service-description">A top-to-bottom hygienic restoration of your vehicle's entire cockpit.</p>
-                <div class="service-footer">
-                    <span class="action-text">VIEW DETAILS</span>
-                    <span class="action-arrow">→</span>
-                </div>
-            </div>
+        <div class="service-content">
+            <h3 class="service-title">ENHANCEMENT VALET</h3>
+            <p class="service-description">Perfect for maintaining depth, removing light road grime, and adding a layer of protection.</p>
+            <div class="service-footer">
+            <span class="action-text">VIEW DETAILS</span>
+            <span class="action-arrow">→</span>
             </div>
         </div>
+        </div>
+
+        <div class="service-card" onclick="openServiceModal('interior')" role="button" tabindex="0" aria-label="Open Interior Valet details">
+        <div class="service-image-placeholder">
+            </div>
+        <div class="service-content">
+            <h3 class="service-title">INTERIOR VALET</h3>
+            <p class="service-description">A top-to-bottom hygienic restoration of your vehicle's entire cockpit.</p>
+            <div class="service-footer">
+            <span class="action-text">VIEW DETAILS</span>
+            <span class="action-arrow">→</span>
+            </div>
+        </div>
+        </div>
+
+    </div>
     </section>
 
     <section class="benefits-section">
@@ -180,6 +184,6 @@
         </div>
     </section>
 
-    <script src="js/serviceModal.js" defer></script>
+    <script src="js/" defer></script>
 </body>
 </html>
