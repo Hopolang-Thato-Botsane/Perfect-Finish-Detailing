@@ -2,7 +2,35 @@
   background-color: var(--bg-main);
   padding: var(--space-huge) var(--space-xxl);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xl);
+}
+
+.benefits-header {
+  width: 100%;
+  max-width: 87.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.benefits-main-heading {
+  font-family: var(--font-body);
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--text-pure);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.benefits-subheading {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 35rem;
 }
 
 .bento-grid {
@@ -44,6 +72,8 @@
   overflow: hidden;
   position: relative;
   transition: border-color 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  background-size: cover;
+  background-position: center;
 }
 
 .bento-card:hover {
