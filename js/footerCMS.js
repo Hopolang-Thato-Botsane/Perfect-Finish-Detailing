@@ -1,11 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Sync structural copyright year text label instantly
-  const yearElement = document.getElementById('current-year');
+
+    const yearElement = document.getElementById('current-year');
   if (yearElement) yearElement.textContent = new Date().getFullYear();
 
   const SPREADSHEET_ID = '1pIvyrhjkGEvs8PUMS-BIho4sPoJGgAGPzoIKTpgzAlE';
-  
-  // FIXING 404: If explicitly calling the tab name fails, we strip it to hit the default active view
+
   const GOOGLE_API_ENDPOINT = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
 
   async function buildFullSectionCMS() {
@@ -16,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!response.ok) throw new Error(`Google Sheet Stream Rejected: ${response.status}`);
       const textData = await response.text();
       
-      // Clean up Google's wrapper parameters safely
       const jsonString = textData.substring(textData.indexOf('{'), textData.lastIndexOf('}') + 1);
       const jsonParsed = JSON.parse(jsonString);
       
@@ -24,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const rows = jsonParsed.table.rows;
       if (!rows || rows.length === 0) throw new Error("No data rows discovered.");
 
-      // Dynamic header mapping tool to prevent column order shifting errors
       const headerMap = {};
       columns.forEach((col, index) => {
         const label = col.label ? col.label.trim() : (col.id ? col.id.trim() : '');
@@ -33,10 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       console.log("🗺️ Dynamic Column Index Headers Map:", headerMap);
 
-      // Access row 2 values safely
       const dataCells = rows[0].c;
 
-      // Safe index fetch helper
       function getCellValue(headerName, defaultText = '') {
         const index = headerMap[headerName];
         if (index !== undefined && dataCells && dataCells[index]) {
@@ -45,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return defaultText;
       }
 
-      // Map values directly matching your spreadsheet headers
       const imagePath      = getCellValue('footerBGImage');
       const companyName    = getCellValue('companyName', "Perfect Finish Detailing");
       const geoTag         = getCellValue('geoTag', "Protea Glen ext 11, Soweto");
@@ -54,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const contactEmail   = getCellValue('companyContactEmail', "info@perfectfinish.co.za");
       const contactMobile  = getCellValue('companyContactMobile', "08X XXX XXXX");
 
-      // Inject Text Data Safely into DOM elements if they exist
       const nameEl = document.getElementById('companyName');
       if (nameEl) nameEl.textContent = companyName;
 
@@ -79,13 +72,11 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileAnchor.href = `tel:${mobileAnchor.textContent.replace(/\s+/g, '')}`;
       }
 
-      // Update WhatsApp dynamic hook link
       const whatsappAnchor = document.getElementById('whatsappAnchor');
       if (whatsappAnchor && contactMobile) {
          whatsappAnchor.href = `https://wa.me/${contactMobile.replace(/[^0-9]/g, '')}`;
       }
 
-      // Inject Background Visual Image Path
       const footerElement = document.getElementById('footerBGImage');
       if (footerElement) {
         let cleanImgPath = imagePath;
@@ -107,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error("❌ CMS dynamic integration failure:", error);
       
-      // Safety visual backup render if network drops completely
       const footerElement = document.getElementById('footerBGImage');
       if (footerElement) {
         footerElement.style.backgroundImage = "url('/public/footerBanner.jpg')";
