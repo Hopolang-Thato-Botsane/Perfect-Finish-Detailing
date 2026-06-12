@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/section-hero.css">
     <link rel="stylesheet" href="css/section-services.css">
     <link rel="stylesheet" href="css/section-benefits.css">
+    <link rel="stylesheet" href="css/section-booking.css">
     <link rel="stylesheet" href="css/section-faq.css">
     <link rel="stylesheet" href="css/section-footer.css">
 
@@ -125,35 +126,8 @@
             <p class="faq-subheading">Three transparent tiers of restoration. No rushed assembly lines, no shortcuts—just pure attention to detail.</p>
         </header>
 
-        <div class="services-grid">
-            
-            <div class="service-card" onclick="openServiceModal('enhancement')" role="button" tabindex="0" aria-label="Open Enhancement Valet details">
-                <div class="service-image-placeholder" style="background-image: url('public/enhancementBanner.jpg');">
-                </div>
-                <div class="service-content">
-                    <h3 class="service-title">ENHANCEMENT VALET</h3>
-                    <p class="service-description">Perfect for maintaining depth, removing light road grime, and adding a layer of protection.</p>
-                    <div class="service-footer">
-                    <span class="action-text">VIEW DETAILS</span>
-                    <span class="action-arrow">→</span>
-                    </div>
-                </div>
+        <div class="services-grid" id="servicesGridContainer">
             </div>
-
-            <div class="service-card" onclick="openServiceModal('interior')" role="button" tabindex="0" aria-label="Open Interior Valet details">
-                <div class="service-image-placeholder" style="background-image: url('public/interiorBanner.jpg');">
-                </div>
-                <div class="service-content">
-                    <h3 class="service-title">INTERIOR VALET</h3>
-                    <p class="service-description">A top-to-bottom hygienic restoration of your vehicle's entire cockpit.</p>
-                    <div class="service-footer">
-                    <span class="action-text">VIEW DETAILS</span>
-                    <span class="action-arrow">→</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
     </section>
 
     <section class="benefits-section">
@@ -214,6 +188,75 @@
                     </p>
                 </div>
             </div>
+
+        </div>
+    </section>
+
+    <section class="configurator-section">
+        <div class="configurator-container">
+        
+            <div class="config-header">
+                <h2 class="config-title">Reserve Slot</h2>
+                <p class="config-subtitle">Spaces are strictly limited to ensure uncompromising quality. Secure your vehicle’s weekend transformation below.</p>
+            </div>
+
+            <form id="studioConfigForm" class="config-form" data-phone="27XXXXXXXXX" autocomplete="off">
+                
+                <div class="config-grid-row">
+                <div class="config-group">
+                    <label for="clientName" class="config-label">Client Name:</label>
+                    <input type="text" id="clientName" class="config-field" placeholder="Name" required>
+                </div>
+
+                <div class="config-group">
+                    <label for="clientPhone" class="config-label">Client Phone Number:</label>
+                    <input type="tel" id="clientPhone" class="config-field" placeholder="Contact Number" required>
+                </div>
+
+                <div class="config-group">
+                    <label for="detailDate" class="config-label">Detail Date</label>
+                    <input type="text" id="detailDate" class="config-field" placeholder="DD/MM/YYYY" required>
+                </div>
+                </div>
+
+                <div class="config-grid-row">
+                <div class="config-group">
+                    <label class="config-label">Service Selection:</label>
+                    <div class="stepper-control" id="serviceStepper" data-index="0">
+                    <button type="button" class="stepper-arrow prev">←</button>
+                    <span class="stepper-text">Paint Enhancement</span>
+                    <button type="button" class="stepper-arrow next">→</button>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label class="config-label">Vehicle Type</label>
+                    <div class="stepper-control" id="vehicleStepper" data-index="0">
+                    <button type="button" class="stepper-arrow prev">←</button>
+                    <span class="stepper-text">Sedan</span>
+                    <button type="button" class="stepper-arrow next">→</button>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label for="detailTime" class="config-label">Detail Time</label>
+                    <input type="text" id="detailTime" class="config-field" placeholder="DD/MM/YYYY" required>
+                </div>
+                </div>
+
+                <div class="config-action-bar">
+                <div class="action-bar-inner">
+                    
+                    <div class="btn-wrap">
+                    <button type="submit" class="config-submit-btn">Reserve Detail</button>
+                    <div class="btn-underline"></div>
+                    </div>
+
+                    <div class="config-total-display">R 0</div>
+                </div>
+                </div>
+
+            </form>
 
         </div>
     </section>
@@ -390,7 +433,9 @@
         </div>
     </footer>
 
+    <script src="js/booking.js" defer></script>
     <script src="js/serviceModal.js" defer></script>
     <script src="js/faqAccordian.js" defer></script>
+
 </body>
 </html>

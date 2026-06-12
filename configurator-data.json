@@ -1,0 +1,13 @@
+{
+  "services": [
+    { "name": "Enhancement + Interior", "basePrice": 6000 },
+    { "name": "Paint Enhancement", "basePrice": 4500 },
+    { "name": "Concours Elite", "basePrice": 8500 }
+  ],
+  "vehicles": [
+    { "name": "Sedan", "premium": 0 },
+    { "name": "SUV / Large", "premium": 500 },
+    { "name": "Supercar / Exotic", "premium": 750 }
+  ]
+}
+
