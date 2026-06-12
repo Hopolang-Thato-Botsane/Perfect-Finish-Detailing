@@ -1,42 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
-
   const faqContainer = document.getElementById('faqContainer');
-  
   if (!faqContainer) return;
 
-  async function loadAndRenderFAQs() {
+  const SPREADSHEET_ID = '1pIvyrhjkGEvs8PUMS-BIho4sPoJGgAGPzoIKTpgzAlE';
+  const SHEET_NAME = 'faqs';
+  const CMS_ENDPOINT = `https://opensheet.elk.sh/${SPREADSHEET_ID}/${SHEET_NAME}`;
+
+  async function initializeFaqCMS() {
     try {
-      let response;
-      let dataLoaded = false;
-
-      try {
-        response = await fetch("./faqs-content.json");
-        if (response.ok) dataLoaded = true;
-      } catch (err) {
-        console.log("Root fetch attempt bypassed, checking alternative paths...");
-      }
-
-      if (!dataLoaded) {
-        console.warn("Primary root lookup returned 404, executing parent relative search path...");
-        response = await fetch("../faqs-content.json");
-        if (!response.ok) throw new Error(`Both target path tracks resolved with Status: ${response.status}`);
-      }
+      const response = await fetch(CMS_ENDPOINT);
       
+      if (!response.ok) {
+        throw new Error(`CMS Fetch Failure Status: ${response.status}`);
+      }
+
       const faqData = await response.json();
-      console.log("FAQ content dataset synced successfully.");
-      
-      faqContainer.innerHTML = faqData.map((item, index) => {
 
+      if (!Array.isArray(faqData)) {
+        throw new Error('Data returned from sheet is not a valid array structure.');
+      }
+
+      faqContainer.innerHTML = '';
+
+      faqContainer.innerHTML = faqData.map((item, index) => {
         const paddedIndex = String(index + 1).padStart(2, '0');
+        const itemId = item.id || index;
         
         return `
-          <div class="faq-item" id="item-${item.id}">
+          <div class="faq-item" id="item-${itemId}">
             <button class="faq-trigger" 
                     aria-expanded="false" 
-                    aria-controls="panel-${item.id}">
+                    aria-controls="panel-${itemId}">
               <div class="faq-number-title">
                 <span class="faq-index">${paddedIndex} / </span>
-                <span class="faq-question">${item.question}</span>
+                <span class="faq-question">${item.question || 'Missing Question'}</span>
               </div>
               <div class="faq-icon-wrapper" aria-hidden="true">
                 <span class="icon-line horizontal"></span>
@@ -44,73 +41,62 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </button>
             <div class="faq-panel" 
-                 id="panel-${item.id}" 
+                 id="panel-${itemId}" 
                  aria-hidden="true" 
-                 style="max-height: null;">
+                 style="max-height: 0px;">
               <div class="faq-content-inner">
-                <p>${item.answer}</p>
+                <p>${item.answer || 'Missing Answer'}</p>
               </div>
             </div>
           </div>
         `;
       }).join('');
-      
-      // Wire interactive event loops once structural nodes populate the DOM tree
-      initializeAccordionInteractions();
+
+      attachAccordionEventListeners();
+
     } catch (error) {
-      console.error("Critical Exception: Could not compile dynamic FAQ dataset:", error);
+      console.error('⚠️ Headless CMS Integration Error:', error);
+      faqContainer.innerHTML = `
+        <p class="cms-error-fallback" style="color: var(--text-dim); font-size: 0.875rem; text-align: center; padding: 2rem;">
+          Unable to stream live content at this time. Please refresh or check back shortly.
+        </p>
+      `;
     }
   }
 
-  function initializeAccordionInteractions() {
-    const faqTriggers = document.querySelectorAll('.faq-trigger');
+  function attachAccordionEventListeners() {
+    const triggers = faqContainer.querySelectorAll('.faq-trigger');
 
-    faqTriggers.forEach(trigger => {
-      trigger.addEventListener('click', () => {
-        const currentItem = trigger.closest('.faq-item');
-        const currentPanel = currentItem.querySelector('.faq-panel');
-        const isOpen = currentItem.classList.contains('is-open');
+    triggers.forEach(trigger => {
+      trigger.addEventListener('click', function() {
+        const currentItem = this.closest('.faq-item');
+        const panel = currentItem.querySelector('.faq-panel');
+        const isExpanded = this.getAttribute('aria-expanded') === 'true';
 
-        // Mutual Exclusivity Layer (The Single-Open Rule Loop)
-        document.querySelectorAll('.faq-item').forEach(item => {
-          if (item !== currentItem) {
-            item.classList.remove('is-open');
-            
-            const panel = item.querySelector('.faq-panel');
-            panel.style.maxHeight = null;
-            
-            const button = item.querySelector('.faq-trigger');
-            button.setAttribute('aria-expanded', 'false');
-            panel.setAttribute('aria-hidden', 'true');
+      triggers.forEach(otherTrigger => {
+        if (otherTrigger !== trigger) {
+          otherTrigger.setAttribute('aria-expanded', 'false');
+          const otherItem = otherTrigger.closest('.faq-item');
+          const otherPanel = otherItem.querySelector('.faq-panel');
+          if (otherPanel) {
+            otherPanel.setAttribute('aria-hidden', 'true');
+            // FIXED SYNTAX: Using strict property mapping string keys
+            otherPanel.style.setProperty('max-height', '0px');
           }
-        });
-
-        // Toggle visibility state vectors on targeted frame entry
-        if (isOpen) {
-          currentItem.classList.remove('is-open');
-          currentPanel.style.maxHeight = null;
-          trigger.setAttribute('aria-expanded', 'false');
-          currentPanel.setAttribute('aria-hidden', 'true');
-        } else {
-          currentItem.classList.add('is-open');
-          // Dynamically compute precise content height to ensure a buttery layout animation
-          currentPanel.style.maxHeight = currentPanel.scrollHeight + 'px';
-          trigger.setAttribute('aria-expanded', 'true');
-          currentPanel.setAttribute('aria-hidden', 'false');
         }
+      });
+
+      this.setAttribute('aria-expanded', !isExpanded);
+      panel.setAttribute('aria-hidden', isExpanded);
+
+      if (!isExpanded) {
+        panel.style.setProperty('max-height', `${panel.scrollHeight}px`);
+      } else {
+        panel.style.setProperty('max-height', '0px');
+      }
       });
     });
   }
 
-  // Window Frame Mutex Tracking (Recalculates clear bounds during runtime resizing)
-  window.addEventListener('resize', () => {
-    const activeItem = document.querySelector('.faq-item.is-open');
-    if (activeItem) {
-      const activePanel = activeItem.querySelector('.faq-panel');
-      activePanel.style.maxHeight = activePanel.scrollHeight + 'px';
-    }
-  });
-
-  // Launch network stream acquisition track
-  loadAndRenderFAQs();
+  initializeFaqCMS();
 });
