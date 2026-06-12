@@ -133,15 +133,15 @@
 
 .card-title {
   font-family: var(--font-display, 'Syne', sans-serif);
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
   font-weight: 800;
   color: var(--text-pure, #ffffff);
   line-height: 1.15;
   margin: 0;
   letter-spacing: -0.01em;
+  word-break: break-word; 
 }
 
-/* --- Hidden Subtext Slide Up Element --- */
 .card-hidden-para {
   font-family: var(--font-body, 'Inter', sans-serif);
   font-size: 0.875rem;
@@ -157,7 +157,6 @@
               max-height 0.4s ease;
 }
 
-/* Hover Adjustments */
 .bento-card:hover .card-meta {
   opacity: 0;
   transform: translateY(-0.5rem);
@@ -173,12 +172,15 @@
 @media (max-width: 64rem) {
   .bento-grid {
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
+    grid-template-rows: auto; 
+    gap: var(--space-md, 1rem);
   }
+  
   .card-tall, .card-wide, .card-small {
     grid-column: span 1 !important;
     grid-row: auto !important;
-    min-height: 17.5rem;
+    min-height: 18.75rem; 
+    height: auto; 
   }
 }
 
@@ -186,22 +188,11 @@
   .bento-grid {
     grid-template-columns: 1fr;
   }
+  
   .card-tall, .card-wide, .card-small {
     grid-column: unset !important;
-    min-height: 15rem;
-  }
-  .card-meta { 
-    opacity: 0; 
-    display: none; 
-  }
-  .card-hidden-para { 
-    opacity: 1; 
-    max-height: unset; 
-    transform: none; 
-  }
-
-  .card-bg-image {
-    opacity: 0.15;
-    transform: scale(1);
+    min-height: 16rem;
+    height: auto;
+    padding: 1.75rem; 
   }
 }
