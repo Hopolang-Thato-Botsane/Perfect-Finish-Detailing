@@ -1,10 +1,10 @@
 .benefits-section {
-  background-color: var(--bg-main);
-  padding: var(--space-huge) var(--space-xxl);
+  background-color: var(--bg-main, #0a0a0a);
+  padding: var(--space-huge, 5rem) var(--space-xxl, 2.5rem);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xl);
+  gap: var(--space-xl, 2rem);
 }
 
 .benefits-header {
@@ -16,19 +16,19 @@
 }
 
 .benefits-main-heading {
-  font-family: var(--font-body);
+  font-family: var(--font-body, 'Inter', sans-serif);
   font-size: 2rem;
   font-weight: 500;
-  color: var(--text-pure);
+  color: var(--text-pure, #ffffff);
   margin: 0;
   letter-spacing: -0.02em;
 }
 
 .benefits-subheading {
-  font-family: var(--font-body);
+  font-family: var(--font-body, 'Inter', sans-serif);
   font-size: 0.9375rem;
   line-height: 1.5;
-  color: var(--text-muted);
+  color: var(--text-muted, #8a8a8a);
   margin: 0;
   max-width: 35rem;
 }
@@ -37,7 +37,7 @@
   display: grid;
   grid-template-columns: 1.2fr 1fr 1fr;
   grid-template-rows: 18.75rem 18.75rem;
-  gap: var(--space-lg);
+  gap: var(--space-lg, 1.5rem);
   max-width: 87.5rem;
   width: 100%;
 }
@@ -63,27 +63,56 @@
 }
 
 .bento-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-muted);
+  background: #111111; 
+  border: 1px solid var(--border-muted, rgba(255, 255, 255, 0.08));
   padding: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
   position: relative;
+  z-index: 1;
   transition: border-color 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  background-size: cover;
-  background-position: center;
 }
 
 .bento-card:hover {
-  border-color: var(--border-active);
+  border-color: var(--border-active, #ffffff);
+}
+
+.card-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 0.4s ease, 
+              transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.card-bg-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 10, 0.85); 
+}
+
+.bento-card:hover .card-bg-image {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .card-meta {
   display: flex;
-  gap: var(--space-sm);
-  font-family: var(--font-body);
+  gap: var(--space-sm, 0.75rem);
+  font-family: var(--font-body, 'Inter', sans-serif);
   font-size: 0.8125rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -93,30 +122,31 @@
               transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.card-index { color: var(--text-muted); }
-.card-label { color: var(--text-dim); }
+.card-index { color: var(--text-muted, #8a8a8a); }
+.card-label { color: var(--text-dim, #666666); }
 
 .card-main {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-md, 1rem);
 }
 
 .card-title {
-  font-family: var(--font-display);
+  font-family: var(--font-display, 'Syne', sans-serif);
   font-size: 1.2rem;
   font-weight: 800;
-  color: var(--text-pure);
+  color: var(--text-pure, #ffffff);
   line-height: 1.15;
   margin: 0;
   letter-spacing: -0.01em;
 }
 
+/* --- Hidden Subtext Slide Up Element --- */
 .card-hidden-para {
-  font-family: var(--font-body);
+  font-family: var(--font-body, 'Inter', sans-serif);
   font-size: 0.875rem;
   line-height: 1.6;
-  color: var(--text-muted);
+  color: var(--text-muted, #8a8a8a);
   margin: 0;
   opacity: 0;
   max-height: 0;
@@ -127,6 +157,7 @@
               max-height 0.4s ease;
 }
 
+/* Hover Adjustments */
 .bento-card:hover .card-meta {
   opacity: 0;
   transform: translateY(-0.5rem);
@@ -134,7 +165,7 @@
 
 .bento-card:hover .card-hidden-para {
   opacity: 1;
-  max-height: 7.5rem;
+  max-height: 8.5rem;
   transform: translateY(0);
   pointer-events: auto;
 }
@@ -159,6 +190,18 @@
     grid-column: unset !important;
     min-height: 15rem;
   }
-  .card-meta { opacity: 0; display: none; }
-  .card-hidden-para { opacity: 1; max-height: unset; transform: none; }
+  .card-meta { 
+    opacity: 0; 
+    display: none; 
+  }
+  .card-hidden-para { 
+    opacity: 1; 
+    max-height: unset; 
+    transform: none; 
+  }
+
+  .card-bg-image {
+    opacity: 0.15;
+    transform: scale(1);
+  }
 }
