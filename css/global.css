@@ -1,3 +1,6 @@
+/* ==========================================================================
+   DESIGN SYSTEM VARIABLES & CORE FONTS
+   ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap');
 
 :root {
@@ -21,6 +24,9 @@
   --space-mega: 6.25rem;
 }
 
+/* ==========================================================================
+   GLOBAL RESET & BASE RULES
+   ========================================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -42,6 +48,7 @@ body {
   overflow-x: hidden;
 }
 
+/* Typography Utilities */
 .syne-heading {
   font-family: var(--font-display);
   color: var(--text-pure);
@@ -53,6 +60,7 @@ body {
   color: var(--text-muted);
 }
 
+/* Custom Lean Scrollbar */
 ::-webkit-scrollbar {
   width: 0.5rem;
 }
@@ -66,7 +74,7 @@ body {
   border-radius: 0.25rem;
 }
 
-
+/* Shared Modular Section Headers */
 .section-header {
   width: 100%;
   max-width: 87.5rem;

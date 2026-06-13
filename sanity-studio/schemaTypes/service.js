@@ -18,7 +18,7 @@ export default {
       name: 'image',
       title: 'Package Banner Image',
       type: 'image',
-      options: { hotspot: true } // Allows premium image cropping inside the CMS
+      options: { hotspot: true }
     },
     {
       name: 'cardDescription',

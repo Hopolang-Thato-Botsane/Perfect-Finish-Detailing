@@ -1,0 +1,85 @@
+.hero-viewport {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-color: var(--bg-main);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  display: flex;
+}
+
+.hero-overlay-darkness {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg, 
+    rgba(10, 10, 10, 0.5) 0%, 
+    rgba(10, 10, 10, 0.92) 100%
+  );
+  z-index: 1;
+}
+
+.hero-interface-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 87.5rem;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-xl) var(--space-huge); 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 2;
+}
+
+.hero-branding {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text-pure);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: var(--space-md);
+}
+
+.hero-headline-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+  max-width: 65rem;
+}
+
+.location-tag {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: var(--space-xs);
+}
+
+.hero-main-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6.5vw, 4.75rem); 
+  font-weight: 800;
+  color: var(--text-pure);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  white-space: pre-line;
+}
+
+@media (max-width: 48rem) {
+  .hero-interface-frame {
+    padding: var(--space-xl) var(--space-md);
+  }
+}
