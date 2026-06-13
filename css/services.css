@@ -1,8 +1,11 @@
+/* ==========================================================================
+   SERVICES GRID LAYOUT CORE
+   ========================================================================== */
 .services-section {
   width: 100%;
   max-width: 87.5rem;
   margin: 0 auto;
-  padding: var(--space-huge) var(--space-xxl);
+  padding: var(--space-huge) var(--space-xl);
 }
 
 .services-grid {
@@ -14,27 +17,21 @@
 }
 
 .service-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-muted);
-  padding: var(--space-xl);
+  background: transparent;
+  border: none;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
   cursor: pointer;
-  transition: border-color 0.4s ease, background-color 0.4s ease;
 }
 
-.service-card:hover {
-  border-color: var(--border-active);
-  background: rgba(255, 255, 255, 0.04);
-}
-
+/* Image Aspect Box Frame */
 .service-image-placeholder {
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border: 1px solid var(--border-muted);
-  background-color: #111;
+  background-color: #0a0a0a;
+  margin-bottom: var(--space-lg);
 }
 
 .service-card-img {
@@ -45,15 +42,27 @@
 }
 
 .service-card:hover .service-card-img {
-  transform: scale(1.03);
+  transform: scale(1.02);
+}
+
+/* ==========================================================================
+   EDITORIAL TYPOGRAPHY ALIGNMENT
+   ========================================================================== */
+.service-content-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: 0;
 }
 
 .service-title {
   font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-weight: 500; /* Clean, lightweight wide display font execution */
+  letter-spacing: 0.04em; /* Premium character tracking layout */
   color: var(--text-pure);
+  text-transform: uppercase;
+  margin: 0;
 }
 
 .service-description {
@@ -61,12 +70,28 @@
   font-size: 0.9375rem;
   line-height: 1.6;
   color: var(--text-muted);
+  margin: 0 0 var(--space-md) 0;
 }
 
-.service-footer {
-  margin-top: auto;
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--border-muted);
+/* ==========================================================================
+   THE MID-CARD GOLD SEPARATOR LINE
+   ========================================================================== */
+.service-footer-line {
+  width: 100%;
+  height: 1px;
+  background-color: var(--accent-gold); /* Golden divider rule stays true always */
+  margin-bottom: var(--space-md);
+}
+
+/* ==========================================================================
+   THE ACTION FOOTER LAYER
+   ========================================================================== */
+.service-action-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  padding-bottom: var(--space-sm);
 }
 
 .action-text {
@@ -74,19 +99,37 @@
   font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.05em;
-  color: var(--text-pure);
+  color: var(--text-pure); /* Neutral state white typography */
+  text-transform: uppercase;
+  transition: color 0.3s ease;
 }
 
+/* Dynamic Hidden Interaction Arrow */
+.service-action-row::after {
+  content: '→';
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  color: var(--text-pure); /* Color naturally matches adjacent text context */
+  opacity: 0;
+  transform: translateX(-15px);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+}
+
+/* ==========================================================================
+   HOVER ACTION TRIGGER MATCHES
+   ========================================================================== */
 .service-card:hover .action-text {
-  color: var(--accent-gold);
+  color: var(--text-pure); 
+}
+
+.service-card:hover .service-action-row::after {
+  opacity: 1;
+  transform: translateX(0); /* Emerges neatly on the right margin bound */
 }
 
 @media (max-width: 48rem) {
-  .services-section {
-    padding: var(--space-xl) var(--space-md);
-  }
   .services-grid {
     grid-template-columns: 1fr;
-    gap: var(--space-md);
+    gap: var(--space-xl);
   }
 }

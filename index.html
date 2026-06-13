@@ -7,8 +7,64 @@
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/hero.css">
     <link rel="stylesheet" href="css/services.css">
+    <link rel="stylesheet" href="css/serviceModal.css">
 </head>
 <body>
+
+    <div class="modal-overlay" id="packageDetailsModal" role="dialog" aria-hidden="true">
+        <div class="modal-window">
+            
+            <div class="modal-top-bar">
+                <div class="modal-breadcrumbs">
+                    <span class="crumb-root">Home</span>
+                    <span class="crumb-sep">/</span>
+                    <span class="crumb-active">Package</span>
+                </div>
+                <button class="modal-close-trigger" id="closeModalTrigger">| CLOSE |</button>
+            </div>
+            
+            <div class="modal-scroll-frame">
+                <div class="modal-hero-banner">
+                    <img id="modalHeroImage" src="" alt="" class="hero-image-src" style="object-fit: cover;">
+                </div>
+                
+                <div class="modal-content-grid">
+                    <div class="overview-block">
+                        <h2 id="modalPackageTitle">Package Title</h2>
+                        <p id="modalPackageDescription">Package description overview goes here.</p>
+                        
+                        <h4 class="modal-section-title">Process Breakdown</h4>
+                        <div class="process-stack" id="modalStepsContainer"></div>
+                    </div>
+                    
+                    <div class="modal-sidebar-column">
+                        <div>
+                            <h4 class="modal-section-title">Quick Highlights</h4>
+                            <ul class="highlights-list" id="modalHighlightsList"></ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="modal-section-title">Time Allocation</h4>
+                            <p class="metadata-text-heavy" id="modalTimeAllocation">± 1.5 - 2 Days</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="modal-section-title">Pricing</h4>
+                            <div class="binary-pricing-row" id="modalPricingMatrix"></div>
+                        </div>
+                        
+                        <div class="sidebar-action-footer">
+                            <button class="reserve-action-btn" id="modalReserveActionBtn">
+                                <span class="btn-label">Reserve This Package</span>
+                                <div class="btn-underline"></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
 
     <header class="hero-viewport" id="heroAssetContainer">
         <div class="hero-overlay-darkness"></div>
@@ -23,6 +79,15 @@
             </div>
         </div>
     </header>
+
+    <section class="services-section">
+        <div class="section-header">
+            <h2>Our Services</h2>
+            <p>Three transparent tiers of restoration. No rushed assembly lines, no shortcuts—just pure attention to detail.</p>
+        </div>
+        
+        <div class="services-grid" id="servicesGridContainer"></div>
+    </section>
 
     <script src="js/appCMS.js"></script>
 </body>
