@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const API_VERSION = 'v2026-06-13'; 
 
   let runtimeServicesCache = [];
+  
+  let bookingServicesList = [];
+  let bookingVehiclesList = [];
 
   const QUERY = encodeURIComponent(`{
     "hero": *[_type == "hero"][0]{
@@ -32,6 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
       _id,
       question,
       answer
+    },
+    "bookingConfig": *[_type == "bookingConfig"][0]{
+      whatsappNumber,
+      services,
+      vehicles
     }
   }`);
   
@@ -51,9 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
         runtimeServicesCache = result.services;
         renderServicesGrid(result.services);
       }
-    
+
       if (result.faqs && result.faqs.length > 0) {
         renderFaqAccordion(result.faqs);
+      }
+
+      if (result.bookingConfig) {
+        initializeBookingEngine(result.bookingConfig);
       }
 
       setupModalInteractions();
@@ -273,6 +285,117 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function initializeBookingEngine(configData) {
+    const configForm = document.getElementById("studioConfigForm");
+    
+    bookingServicesList = configData.services || [];
+    bookingVehiclesList = configData.vehicles || [];
+
+    if (configForm && configData.whatsappNumber) {
+      configForm.setAttribute('data-phone', configData.whatsappNumber);
+    }
+
+    renderCalculationState();
+    bindStepperInteractions();
+    bindFormSubmission();
+  }
+
+  function renderCalculationState() {
+    const serviceStepper = document.getElementById("serviceStepper");
+    const vehicleStepper = document.getElementById("vehicleStepper");
+    const totalDisplay = document.querySelector(".config-total-display");
+
+    if (!serviceStepper || !vehicleStepper || !totalDisplay) return;
+    if (!bookingServicesList.length || !bookingVehiclesList.length) return;
+
+    const currentServiceIdx = parseInt(serviceStepper.dataset.index) || 0;
+    const currentVehicleIdx = parseInt(vehicleStepper.dataset.index) || 0;
+
+    serviceStepper.querySelector(".stepper-text").textContent = bookingServicesList[currentServiceIdx].name;
+    vehicleStepper.querySelector(".stepper-text").textContent = bookingVehiclesList[currentVehicleIdx].name;
+
+    const calculatedRawTotal = bookingServicesList[currentServiceIdx].basePrice + bookingVehiclesList[currentVehicleIdx].premium;
+    
+    totalDisplay.textContent = "R " + Math.round(calculatedRawTotal)
+      .toLocaleString("en-ZA")
+      .replace(/,/g, " ");
+  }
+
+  function executeStepSequence(clickEvent, targetStepperContainer, sourceDataArray) {
+    let activeIndex = parseInt(targetStepperContainer.dataset.index) || 0;
+    const triggerBtn = clickEvent.target;
+
+    if (triggerBtn.classList.contains("next")) {
+      activeIndex = (activeIndex + 1) % sourceDataArray.length;
+    } else if (triggerBtn.classList.contains("prev")) {
+      activeIndex = (activeIndex - 1 + sourceDataArray.length) % sourceDataArray.length;
+    } else {
+      return; 
+    }
+
+    targetStepperContainer.dataset.index = activeIndex;
+    renderCalculationState();
+  }
+
+  function bindStepperInteractions() {
+    const serviceStepper = document.getElementById("serviceStepper");
+    const vehicleStepper = document.getElementById("vehicleStepper");
+
+    if (serviceStepper) {
+      serviceStepper.addEventListener("click", (e) => executeStepSequence(e, serviceStepper, bookingServicesList));
+    }
+    if (vehicleStepper) {
+      vehicleStepper.addEventListener("click", (e) => executeStepSequence(e, vehicleStepper, bookingVehiclesList));
+    }
+  }
+
+  function bindFormSubmission() {
+    const configForm = document.getElementById("studioConfigForm");
+    if (!configForm) return;
+
+    configForm.addEventListener("submit", (e) => {
+      e.preventDefault(); 
+
+      const serviceStepper = document.getElementById("serviceStepper");
+      const vehicleStepper = document.getElementById("vehicleStepper");
+      const totalDisplay = document.querySelector(".config-total-display");
+
+      const currentServiceIdx = parseInt(serviceStepper.dataset.index) || 0;
+      const currentVehicleIdx = parseInt(vehicleStepper.dataset.index) || 0;
+      
+      const clientName = document.getElementById("clientName")?.value || "Not Provided";
+      const clientPhone = document.getElementById("clientPhone")?.value || "Not Provided";
+      const detailDate = document.getElementById("detailDate")?.value || "Not Provided";
+      const detailTime = document.getElementById("detailTime")?.value || "Not Provided";
+      
+      const selectedPackage = bookingServicesList[currentServiceIdx]?.name || "Not Selected";
+      const selectedVehicleTier = bookingVehiclesList[currentVehicleIdx]?.name || "Not Selected";
+      const finalPrice = totalDisplay?.textContent || "TBD";
+
+      const messageText = 
+        `*NEW SLOT RESERVATION*\n` +
+        `----------------------------\n\n` +
+        `*Client:* ${clientName}\n` +
+        `*Contact:* ${clientPhone}\n\n` +
+        `*Service:* ${selectedPackage}\n` +
+        `*Vehicle:* ${selectedVehicleTier}\n\n` +
+        `*Date:* ${detailDate}\n` +
+        `*Time:* ${detailTime}\n\n` +
+        `----------------------------\n` +
+        `*Total Price:* ${finalPrice}\n\n` +
+        `_Please confirm availability to lock in this booking._`;
+
+      const whatsappNumber = configForm.getAttribute('data-phone');
+
+      if (!whatsappNumber || whatsappNumber.includes("X")) {
+        alert("Configuration Error: Booking system phone destination target missing on Dashboard.");
+        return;
+      }
+
+      window.open(`https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(messageText)}`, "_blank");
+    });
+  }
+
   function setupScrollReveal() {
     const faqSection = document.getElementById('faqSection');
     if (!faqSection) return;
@@ -298,5 +421,4 @@ document.addEventListener('DOMContentLoaded', () => {
   if (yearContainer) {
     yearContainer.textContent = new Date().getFullYear();
   }
-
 });

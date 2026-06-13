@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/hero.css">
     <link rel="stylesheet" href="css/services.css">
     <link rel="stylesheet" href="css/serviceModal.css">
+    <link rel="stylesheet" href="css/booking.css">
     <link rel="stylesheet" href="css/faq.css">
     <link rel="stylesheet" href="css/footer.css">
 </head>
@@ -89,6 +90,72 @@
         </div>
         
         <div class="services-grid" id="servicesGridContainer"></div>
+    </section>
+
+    <section class="booking-section">
+        <div class="booking-container">
+            
+            <div class="booking-header">
+            <h2 class="booking-main-title">Reserve Slot</h2>
+            <p class="booking-sub-title">Spaces are strictly limited to ensure uncompromising quality. Secure your vehicle’s weekend transformation below.</p>
+            </div>
+
+            <form id="studioConfigForm" class="booking-form" data-phone="27XXXXXXXXX">
+                <div class="form-grid">
+                    
+                    <div class="form-group">
+                    <label for="clientName" class="form-label">Client Name:</label>
+                    <input type="text" id="clientName" class="form-input" placeholder="Name" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                    <label for="clientPhone" class="form-label">Client Phone Number:</label>
+                    <input type="tel" id="clientPhone" class="form-input" placeholder="Contact Number" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                    <label for="detailDate" class="form-label">Detail Date:</label>
+                    <input type="date" id="detailDate" class="form-input text-upper" required>
+                    </div>
+
+                    <div class="form-group">
+                    <label class="form-label">Service Selection:</label>
+                    <div id="serviceStepper" class="custom-stepper" data-index="0">
+                        <button type="button" class="stepper-btn prev" aria-label="Previous Service">←</button>
+                        <span class="stepper-text">Loading package...</span>
+                        <button type="button" class="stepper-btn next" aria-label="Next Service">→</button>
+                    </div>
+                    </div>
+
+                    <div class="form-group">
+                    <label class="form-label">Vehicle Type:</label>
+                    <div id="vehicleStepper" class="custom-stepper" data-index="0">
+                        <button type="button" class="stepper-btn prev" aria-label="Previous Vehicle">←</button>
+                        <span class="stepper-text">Loading model...</span>
+                        <button type="button" class="stepper-btn next" aria-label="Next Vehicle">→</button>
+                    </div>
+                    </div>
+
+                    <div class="form-group">
+                    <label for="detailTime" class="form-label">Detail Time:</label>
+                    <input type="time" id="detailTime" class="form-input" required>
+                    </div>
+
+                </div>
+
+                <hr class="booking-divider">
+
+                <div class="booking-action-baseline">
+                    <div class="action-btn-wrapper">
+                    <button type="submit" class="submit-booking-btn">RESERVE DETAIL</button>
+                    <div class="btn-underline-accent"></div>
+                    </div>
+                    
+                    <div class="config-total-display">R — —</div>
+                </div>
+            </form>
+
+        </div>
     </section>
 
     <section class="faq-section" id="faqSection">
