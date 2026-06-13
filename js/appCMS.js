@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let runtimeServicesCache = [];
 
-  // Unified GROQ Query fetching all layout components from your Sanity dataset
   const QUERY = encodeURIComponent(`{
     "hero": *[_type == "hero"][0]{
       branding,
@@ -46,21 +45,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const { result } = await response.json();
       if (!result) return;
 
-      // 1. Render Hero Content
       if (result.hero) renderHeroSection(result.hero);
       
-      // 2. Render Services Grid Card Components
       if (result.services && result.services.length > 0) {
         runtimeServicesCache = result.services;
         renderServicesGrid(result.services);
       }
-
-      // 3. Render Accordion Items dynamically from your Dashboard
+    
       if (result.faqs && result.faqs.length > 0) {
         renderFaqAccordion(result.faqs);
       }
 
-      // 4. Bind Global Interaction Handlers
       setupModalInteractions();
       setupScrollReveal();
 
@@ -69,9 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  /* ==========================================================================
-     HERO COMPONENT RENDERER
-     ========================================================================== */
   function renderHeroSection(heroData) {
     const heroAssetContainer = document.getElementById('heroAssetContainer');
     const brandingNode = document.getElementById('heroBrandingNode');
@@ -84,9 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (titleNode && heroData.mainHeading) titleNode.innerHTML = heroData.mainHeading.replace(/\n/g, '<br>');
   }
 
-  /* ==========================================================================
-     SERVICES GRID COMPONENT RENDERER
-     ========================================================================== */
   function renderServicesGrid(servicesArray) {
     const gridContainer = document.getElementById('servicesGridContainer');
     if (!gridContainer) return;
@@ -117,9 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ==========================================================================
-     MODAL COMPONENT ENGINE & BINDINGS
-     ========================================================================== */
   function setupModalInteractions() {
     const gridContainer = document.getElementById('servicesGridContainer');
     const modalBackdrop = document.getElementById('packageDetailsModal');
@@ -225,9 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  /* ==========================================================================
-     DYNAMIC FAQ ACCORDION ENGINE
-     ========================================================================== */
   function renderFaqAccordion(faqArray) {
     const container = document.getElementById('faqAccordionContainer');
     if (!container) return;
@@ -271,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const innerContent = currentItem.querySelector('.faq-answer-inner');
       const isExpanded = currentItem.classList.contains('is-expanded');
 
-      // Auto-collapse alternative open items to keep viewport uncluttered
       const openItem = container.querySelector('.faq-item.is-expanded');
       if (openItem && openItem !== currentItem) {
         openItem.classList.remove('is-expanded');
@@ -279,7 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
         openItem.querySelector('.faq-answer-container').style.maxHeight = '0';
       }
 
-      // Height animation logic calculation
       if (!isExpanded) {
         currentItem.classList.add('is-expanded');
         trigger.setAttribute('aria-expanded', 'true');
@@ -292,9 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ==========================================================================
-     GLOBAL SCROLL INTERSECTION OBSERVER
-     ========================================================================== */
   function setupScrollReveal() {
     const faqSection = document.getElementById('faqSection');
     if (!faqSection) return;
@@ -315,4 +293,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   runPortfolioEngine();
+
+  const yearContainer = document.getElementById('currentYearDisplay');
+  if (yearContainer) {
+    yearContainer.textContent = new Date().getFullYear();
+  }
+
 });
