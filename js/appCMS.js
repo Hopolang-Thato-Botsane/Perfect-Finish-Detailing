@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let runtimeServicesCache = [];
 
-  // FIXED: Query updated to match your exact services.js schema field names
+  // Unified GROQ Query fetching all layout components from your Sanity dataset
   const QUERY = encodeURIComponent(`{
     "hero": *[_type == "hero"][0]{
       branding,
@@ -28,6 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
         title,
         desc
       }
+    },
+    "faqs": *[_type == "faq"] | order(orderWeight asc) {
+      _id,
+      question,
+      answer
     }
   }`);
   
@@ -41,20 +46,32 @@ document.addEventListener('DOMContentLoaded', () => {
       const { result } = await response.json();
       if (!result) return;
 
+      // 1. Render Hero Content
       if (result.hero) renderHeroSection(result.hero);
       
+      // 2. Render Services Grid Card Components
       if (result.services && result.services.length > 0) {
         runtimeServicesCache = result.services;
         renderServicesGrid(result.services);
       }
 
+      // 3. Render Accordion Items dynamically from your Dashboard
+      if (result.faqs && result.faqs.length > 0) {
+        renderFaqAccordion(result.faqs);
+      }
+
+      // 4. Bind Global Interaction Handlers
       setupModalInteractions();
+      setupScrollReveal();
 
     } catch (networkError) {
       console.error("❌ Critical Portfolio Engine Fault:", networkError);
     }
   }
 
+  /* ==========================================================================
+     HERO COMPONENT RENDERER
+     ========================================================================== */
   function renderHeroSection(heroData) {
     const heroAssetContainer = document.getElementById('heroAssetContainer');
     const brandingNode = document.getElementById('heroBrandingNode');
@@ -67,6 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (titleNode && heroData.mainHeading) titleNode.innerHTML = heroData.mainHeading.replace(/\n/g, '<br>');
   }
 
+  /* ==========================================================================
+     SERVICES GRID COMPONENT RENDERER
+     ========================================================================== */
   function renderServicesGrid(servicesArray) {
     const gridContainer = document.getElementById('servicesGridContainer');
     if (!gridContainer) return;
@@ -97,6 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ==========================================================================
+     MODAL COMPONENT ENGINE & BINDINGS
+     ========================================================================== */
   function setupModalInteractions() {
     const gridContainer = document.getElementById('servicesGridContainer');
     const modalBackdrop = document.getElementById('packageDetailsModal');
@@ -135,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // FIXED: Data bindings mapped accurately to match schema array structures
   function populateModalData(data) {
     const heroImg = document.getElementById('modalHeroImage');
     const title = document.getElementById('modalPackageTitle');
@@ -159,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (desc) desc.textContent = data.overview || data.cardDescription || '';
     if (timeAlloc) timeAlloc.textContent = data.duration || 'TBD';
 
-    // Processes loop updated to map to step.title and step.desc
     if (stepsContainer) {
       stepsContainer.innerHTML = '';
       if (data.processes && data.processes.length > 0) {
@@ -177,7 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Highlights list loop updated to read data.highlights
     if (highlightsList) {
       highlightsList.innerHTML = '';
       if (data.highlights && data.highlights.length > 0) {
@@ -191,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Pricing Matrix aligned with your binary tier properties (priceSm & priceLg)
     if (pricingMatrix) {
       pricingMatrix.innerHTML = `
         <div class="price-tier">
@@ -204,6 +223,95 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
     }
+  }
+
+  /* ==========================================================================
+     DYNAMIC FAQ ACCORDION ENGINE
+     ========================================================================== */
+  function renderFaqAccordion(faqArray) {
+    const container = document.getElementById('faqAccordionContainer');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    faqArray.forEach(item => {
+      const faqItem = document.createElement('div');
+      faqItem.className = 'faq-item';
+
+      faqItem.innerHTML = `
+        <button class="faq-trigger" aria-expanded="false">
+          <span class="faq-question">${item.question || ''}</span>
+          <div class="faq-icon-wrapper">
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <line class="line-h" x1="5" y1="12" x2="19" y2="12" />
+              <line class="line-v" x1="12" y1="5" x2="12" y2="19" />
+            </svg>
+          </div>
+        </button>
+        <div class="faq-answer-container">
+          <div class="faq-answer-inner">
+            <p class="faq-text">${item.answer || ''}</p>
+          </div>
+        </div>
+      `;
+
+      container.appendChild(faqItem);
+    });
+
+    setupFaqListeners(container);
+  }
+
+  function setupFaqListeners(container) {
+    container.addEventListener('click', (event) => {
+      const trigger = event.target.closest('.faq-trigger');
+      if (!trigger) return;
+
+      const currentItem = trigger.closest('.faq-item');
+      const answerContainer = currentItem.querySelector('.faq-answer-container');
+      const innerContent = currentItem.querySelector('.faq-answer-inner');
+      const isExpanded = currentItem.classList.contains('is-expanded');
+
+      // Auto-collapse alternative open items to keep viewport uncluttered
+      const openItem = container.querySelector('.faq-item.is-expanded');
+      if (openItem && openItem !== currentItem) {
+        openItem.classList.remove('is-expanded');
+        openItem.querySelector('.faq-trigger').setAttribute('aria-expanded', 'false');
+        openItem.querySelector('.faq-answer-container').style.maxHeight = '0';
+      }
+
+      // Height animation logic calculation
+      if (!isExpanded) {
+        currentItem.classList.add('is-expanded');
+        trigger.setAttribute('aria-expanded', 'true');
+        answerContainer.style.maxHeight = innerContent.scrollHeight + 'px';
+      } else {
+        currentItem.classList.remove('is-expanded');
+        trigger.setAttribute('aria-expanded', 'false');
+        answerContainer.style.maxHeight = '0';
+      }
+    });
+  }
+
+  /* ==========================================================================
+     GLOBAL SCROLL INTERSECTION OBSERVER
+     ========================================================================== */
+  function setupScrollReveal() {
+    const faqSection = document.getElementById('faqSection');
+    if (!faqSection) return;
+
+    const observer = new IntersectionObserver((entries, self) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-visible');
+          self.unobserve(entry.target); 
+        }
+      });
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    observer.observe(faqSection);
   }
 
   runPortfolioEngine();
