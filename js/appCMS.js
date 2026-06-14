@@ -5,12 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const API_VERSION = 'v2026-06-13'; 
 
   let runtimeServicesCache = [];
-  
-  // LIVE CMS BOOKING DATA MATRIX POOLS
+
   let bookingServicesList = [];
   let bookingVehiclesList = [];
 
-  // Unified GROQ Query bringing down all dashboard data assets at once
   const QUERY = encodeURIComponent(`{
     "hero": *[_type == "hero"][0]{
       branding,
@@ -30,16 +28,24 @@ document.addEventListener('DOMContentLoaded', () => {
       "imageUrl": image.asset->url,
       processes[] { title, desc }
     },
-    "faqs": *[_type == "faq"] | order(orderWeight asc) {
-      _id,
-      question,
-      answer
+    "benefitsConfig": *[_type == "benefitsConfig"][0]{
+      sectionTitle,
+      sectionSubtitle,
+      card1 { index, tag, heading, description },
+      card2 { index, tag, heading, description },
+      card3 { index, tag, heading, description },
+      card4 { index, tag, heading, description }
     },
     "bookingConfig": *[_type == "bookingConfig"] {
       vehicleType,
       discountPercentage,
       servicePrices
-    }
+    },
+    "faqs": *[_type == "faq"] | order(orderWeight asc) {
+      _id,
+      question,
+      answer
+    },
   }`);
   
   const URL = `https://${PROJECT_ID}.api.sanity.io/${API_VERSION}/data/query/${DATASET}?query=${QUERY}`;
@@ -59,6 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
         renderServicesGrid(result.services);
       }
 
+      if (result.benefitsConfig) renderFixedBentoGrid(result.benefitsConfig);
+
       if (result.faqs && result.faqs.length > 0) {
         renderFaqAccordion(result.faqs);
       }
@@ -66,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (result.bookingConfig && result.bookingConfig.length > 0) {
         initializeBookingEngine(result.bookingConfig);
       }
+      
 
       setupModalInteractions();
       setupScrollReveal();
@@ -144,6 +153,42 @@ document.addEventListener('DOMContentLoaded', () => {
   function closePackageModal() {
     const modalBackdrop = document.getElementById('packageDetailsModal');
     if (modalBackdrop) { modalBackdrop.classList.remove('is-active'); document.body.style.overflow = ''; }
+  }
+
+  function renderFixedBentoGrid(config) {
+    if (!config) return;
+
+    const titleNode = document.getElementById('bentoMainTitle');
+    const subtitleNode = document.getElementById('bentoMainSubtitle');
+    
+    if (titleNode && config.sectionTitle) titleNode.textContent = config.sectionTitle;
+    if (subtitleNode && config.sectionSubtitle) subtitleNode.textContent = config.sectionSubtitle;
+
+    const generateCardHtml = (cardData) => {
+      if (!cardData) return '';
+      return `
+        <div class="bento-card-inner-layer">
+          <div class="bento-card-top-row">
+            <span class="bento-index-num">${cardData.index || ''}</span>
+            <span class="bento-top-tag">${cardData.tag || ''}</span>
+          </div>
+          <div class="bento-card-bottom-block">
+            <h3 class="bento-display-title">${cardData.heading || ''}</h3>
+            <p class="bento-body-description">${cardData.description || ''}</p>
+          </div>
+        </div>
+      `;
+    };
+
+    const slot1 = document.getElementById('bentoSlot1');
+    const slot2 = document.getElementById('bentoSlot2');
+    const slot3 = document.getElementById('bentoSlot3');
+    const slot4 = document.getElementById('bentoSlot4');
+
+    if (slot1) slot1.innerHTML = generateCardHtml(config.card1);
+    if (slot2) slot2.innerHTML = generateCardHtml(config.card2);
+    if (slot3) slot3.innerHTML = generateCardHtml(config.card3);
+    if (slot4) slot4.innerHTML = generateCardHtml(config.card4);
   }
 
   function populateModalData(data) {
@@ -332,7 +377,7 @@ function renderCalculationState() {
     }
   }
 
-function bindFormSubmission() {
+  function bindFormSubmission() {
     const configForm = document.getElementById("studioConfigForm");
     if (!configForm) return;
 
@@ -355,7 +400,6 @@ function bindFormSubmission() {
       const selectedVehicleTier = bookingVehiclesList[currentVehicleIdx]?.vehicleType || "Not Selected";
       const finalPrice = totalDisplay?.textContent || "TBD";
 
-      // Re-ordered text parameters: Date up top, pricing down bottom
       const messageText = 
         `*NEW BOOKING RESERVATION*\n` +
         `📅 *Date:* ${detailDate} @ ${detailTime}\n` +
@@ -368,7 +412,6 @@ function bindFormSubmission() {
         `💰 *Price:* ${finalPrice}\n\n` +
         `_Please confirm availability to secure this slot._`;
 
-      // Static target cellphone fallback parameter
       const whatsappNumber = configForm.getAttribute('data-phone') || "27672754088";
 
       window.open(`https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(messageText)}`, "_blank");

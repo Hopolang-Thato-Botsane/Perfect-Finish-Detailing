@@ -1,0 +1,172 @@
+.benefits-outer-wrapper {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: var(--space-mega) 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.benefits-blur-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 10, 0.88);
+  z-index: 1;
+}
+
+.benefits-content-constrained {
+  position: relative;
+  max-width: 87.5rem;
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+  z-index: 2;
+}
+
+.bento-structural-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  grid-auto-rows: 260px !important;
+  gap: var(--space-md) !important;
+}
+
+.bento-span-tall {
+  grid-column: span 1 !important;
+  grid-row: span 2 !important;
+}
+
+.bento-span-wide {
+  grid-column: span 2 !important;
+  grid-row: span 1 !important;
+}
+
+.bento-span-square {
+  grid-column: span 1 !important;
+  grid-row: span 1 !important;
+}
+
+.bento-interactive-card {
+  position: relative;
+  background: var(--bg-card) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: none !important;
+  overflow: hidden;
+  transition: background-color 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+  cursor: pointer;
+}
+
+.bento-card-inner-layer {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+  padding: var(--space-xl) var(--space-lg) !important;
+  box-sizing: border-box !important;
+}
+
+.bento-card-bottom-block {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  margin-top: auto !important;
+}
+
+.bento-card-top-row {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  font-family: var(--font-body) !important;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  position: relative;
+  top: 0;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.35s cubic-bezier(0.25, 1, 0.5, 1), 
+              transform 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+              visibility 0.35s;
+}
+
+.bento-display-title {
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+  font-size: 1.625rem;
+  color: var(--text-pure) !important;
+  line-height: 1.2;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  transition: color 0.35s ease;
+}
+
+.bento-body-description {
+  font-family: var(--font-body) !important;
+  font-size: 0.875rem;
+  color: #1a1a1a !important;
+  line-height: 1.5;
+  max-width: 100%;
+  max-height: 0;
+  margin-top: 0;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+              margin-top 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+              opacity 0.3s ease,
+              visibility 0.3s;
+}
+
+.bento-interactive-card:hover {
+  background-color: #C5A880 !important;
+}
+
+.bento-interactive-card:hover .bento-card-top-row {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+}
+
+.bento-interactive-card:hover .bento-display-title {
+  color: #000000 !important;
+}
+
+.bento-interactive-card:hover .bento-body-description {
+  opacity: 1;
+  visibility: visible;
+  max-height: 140px;
+  margin-top: var(--space-md);
+}
+
+@media (max-width: 1024px) {
+  .bento-structural-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-auto-rows: 240px !important;
+  }
+  .bento-span-tall { grid-row: span 2 !important; }
+  .bento-span-wide { grid-column: span 2 !important; }
+}
+
+@media (max-width: 768px) {
+  .benefits-outer-wrapper { padding: var(--space-huge) 0; }
+  
+  .bento-structural-grid {
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: auto !important;
+    gap: var(--space-sm) !important;
+  }
+  .bento-span-tall, .bento-span-wide, .bento-span-square {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+  .bento-card-inner-layer { min-height: 220px; padding: var(--space-lg) !important; }
+  .bento-display-title { font-size: 1.375rem !important; }
+  .bento-body-description { opacity: 1; visibility: visible; max-height: none; margin-top: var(--space-sm); color: var(--text-muted) !important; }
+  .bento-interactive-card:hover { background-color: var(--bg-card) !important; }
+  .bento-interactive-card:hover .bento-display-title { color: var(--text-pure) !important; }
+}
