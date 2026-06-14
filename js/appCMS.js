@@ -6,9 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let runtimeServicesCache = [];
   
+  // LIVE CMS BOOKING DATA MATRIX POOLS
   let bookingServicesList = [];
   let bookingVehiclesList = [];
 
+  // Unified GROQ Query bringing down all dashboard data assets at once
   const QUERY = encodeURIComponent(`{
     "hero": *[_type == "hero"][0]{
       branding,
@@ -26,20 +28,17 @@ document.addEventListener('DOMContentLoaded', () => {
       priceSm,
       priceLg,
       "imageUrl": image.asset->url,
-      processes[] {
-        title,
-        desc
-      }
+      processes[] { title, desc }
     },
     "faqs": *[_type == "faq"] | order(orderWeight asc) {
       _id,
       question,
       answer
     },
-    "bookingConfig": *[_type == "bookingConfig"][0]{
-      whatsappNumber,
-      services,
-      vehicles
+    "bookingConfig": *[_type == "bookingConfig"] {
+      vehicleType,
+      discountPercentage,
+      servicePrices
     }
   }`);
   
@@ -54,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!result) return;
 
       if (result.hero) renderHeroSection(result.hero);
-      
+
       if (result.services && result.services.length > 0) {
         runtimeServicesCache = result.services;
         renderServicesGrid(result.services);
@@ -64,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderFaqAccordion(result.faqs);
       }
 
-      if (result.bookingConfig) {
+      if (result.bookingConfig && result.bookingConfig.length > 0) {
         initializeBookingEngine(result.bookingConfig);
       }
 
@@ -113,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="action-text">FROM ${packageData.priceSm || 'TBD'} — VIEW DETAILS</span>
         </div>
       `;
-
       gridContainer.appendChild(cardElement);
     });
   }
@@ -139,21 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    if (closeModalTrigger) {
-      closeModalTrigger.addEventListener('click', closePackageModal);
-    }
-
-    modalBackdrop.addEventListener('click', (event) => {
-      if (event.target === modalBackdrop) closePackageModal();
-    });
+    if (closeModalTrigger) closeModalTrigger.addEventListener('click', closePackageModal);
+    modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) closePackageModal(); });
   }
 
   function closePackageModal() {
     const modalBackdrop = document.getElementById('packageDetailsModal');
-    if (modalBackdrop) {
-      modalBackdrop.classList.remove('is-active');
-      document.body.style.overflow = '';
-    }
+    if (modalBackdrop) { modalBackdrop.classList.remove('is-active'); document.body.style.overflow = ''; }
   }
 
   function populateModalData(data) {
@@ -166,15 +156,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const pricingMatrix = document.getElementById('modalPricingMatrix');
 
     if (heroImg) { 
-      if (data.imageUrl) {
-        heroImg.src = data.imageUrl;
-        heroImg.alt = data.title || '';
-        heroImg.style.display = 'block';
-      } else {
-        heroImg.style.display = 'none';
-      }
+      if (data.imageUrl) { heroImg.src = data.imageUrl; heroImg.alt = data.title || ''; heroImg.style.display = 'block'; } 
+      else { heroImg.style.display = 'none'; }
     }
-    
     if (title) title.textContent = data.title || 'UNTITLED PACKAGE';
     if (desc) desc.textContent = data.overview || data.cardDescription || '';
     if (timeAlloc) timeAlloc.textContent = data.duration || 'TBD';
@@ -185,40 +169,23 @@ document.addEventListener('DOMContentLoaded', () => {
         data.processes.forEach(step => {
           const stepBlock = document.createElement('div');
           stepBlock.className = 'process-item';
-          stepBlock.innerHTML = `
-            <h5 class="process-item-title">${step.title || ''}</h5>
-            <p class="process-item-desc">${step.desc || ''}</p>
-          `;
+          stepBlock.innerHTML = `<h5 class="process-item-title">${step.title || ''}</h5><p class="process-item-desc">${step.desc || ''}</p>`;
           stepsContainer.appendChild(stepBlock);
         });
-      } else {
-        stepsContainer.innerHTML = '<p class="process-item-desc">No process steps detailed for this package.</p>';
       }
     }
 
     if (highlightsList) {
       highlightsList.innerHTML = '';
       if (data.highlights && data.highlights.length > 0) {
-        data.highlights.forEach(textLine => {
-          const li = document.createElement('li');
-          li.textContent = textLine;
-          highlightsList.appendChild(li);
-        });
-      } else {
-        highlightsList.innerHTML = '<li>No specific highlights listed</li>';
+        data.highlights.forEach(t => { const li = document.createElement('li'); li.textContent = t; highlightsList.appendChild(li); });
       }
     }
 
     if (pricingMatrix) {
       pricingMatrix.innerHTML = `
-        <div class="price-tier">
-          <span class="tier-label">Hatch</span>
-          <span class="tier-cost">${data.priceSm || 'TBD'}</span>
-        </div>
-        <div class="price-tier">
-          <span class="tier-label">Sedan / SUV</span>
-          <span class="tier-cost">${data.priceLg || 'TBD'}</span>
-        </div>
+        <div class="price-tier"><span class="tier-label">Hatch</span><span class="tier-cost">${data.priceSm || 'TBD'}</span></div>
+        <div class="price-tier"><span class="tier-label">Sedan / SUV</span><span class="tier-cost">${data.priceLg || 'TBD'}</span></div>
       `;
     }
   }
@@ -226,33 +193,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderFaqAccordion(faqArray) {
     const container = document.getElementById('faqAccordionContainer');
     if (!container) return;
-
     container.innerHTML = '';
 
     faqArray.forEach(item => {
       const faqItem = document.createElement('div');
       faqItem.className = 'faq-item';
-
       faqItem.innerHTML = `
         <button class="faq-trigger" aria-expanded="false">
           <span class="faq-question">${item.question || ''}</span>
           <div class="faq-icon-wrapper">
             <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <line class="line-h" x1="5" y1="12" x2="19" y2="12" />
-              <line class="line-v" x1="12" y1="5" x2="12" y2="19" />
+              <line class="line-h" x1="5" y1="12" x2="19" y2="12" /><line class="line-v" x1="12" y1="5" x2="12" y2="19" />
             </svg>
           </div>
         </button>
-        <div class="faq-answer-container">
-          <div class="faq-answer-inner">
-            <p class="faq-text">${item.answer || ''}</p>
-          </div>
-        </div>
+        <div class="faq-answer-container"><div class="faq-answer-inner"><p class="faq-text">${item.answer || ''}</p></div></div>
       `;
-
       container.appendChild(faqItem);
     });
-
     setupFaqListeners(container);
   }
 
@@ -260,7 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
     container.addEventListener('click', (event) => {
       const trigger = event.target.closest('.faq-trigger');
       if (!trigger) return;
-
       const currentItem = trigger.closest('.faq-item');
       const answerContainer = currentItem.querySelector('.faq-answer-container');
       const innerContent = currentItem.querySelector('.faq-answer-inner');
@@ -274,33 +231,35 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (!isExpanded) {
-        currentItem.classList.add('is-expanded');
-        trigger.setAttribute('aria-expanded', 'true');
+        currentItem.classList.add('is-expanded'); trigger.setAttribute('aria-expanded', 'true');
         answerContainer.style.maxHeight = innerContent.scrollHeight + 'px';
       } else {
-        currentItem.classList.remove('is-expanded');
-        trigger.setAttribute('aria-expanded', 'false');
+        currentItem.classList.remove('is-expanded'); trigger.setAttribute('aria-expanded', 'false');
         answerContainer.style.maxHeight = '0';
       }
     });
   }
 
-  function initializeBookingEngine(configData) {
-    const configForm = document.getElementById("studioConfigForm");
-    
-    bookingServicesList = configData.services || [];
-    bookingVehiclesList = configData.vehicles || [];
+  function initializeBookingEngine(configDataArray) {
 
-    if (configForm && configData.whatsappNumber) {
-      configForm.setAttribute('data-phone', configData.whatsappNumber);
-    }
+    bookingVehiclesList = configDataArray;
+
+    const uniqueServiceNames = new Set();
+    bookingVehiclesList.forEach(vehicle => {
+      if (vehicle.servicePrices) {
+        vehicle.servicePrices.forEach(item => {
+          if (item.serviceName) uniqueServiceNames.add(item.serviceName.trim());
+        });
+      }
+    });
+    bookingServicesList = Array.from(uniqueServiceNames);
 
     renderCalculationState();
     bindStepperInteractions();
     bindFormSubmission();
   }
 
-  function renderCalculationState() {
+function renderCalculationState() {
     const serviceStepper = document.getElementById("serviceStepper");
     const vehicleStepper = document.getElementById("vehicleStepper");
     const totalDisplay = document.querySelector(".config-total-display");
@@ -311,14 +270,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentServiceIdx = parseInt(serviceStepper.dataset.index) || 0;
     const currentVehicleIdx = parseInt(vehicleStepper.dataset.index) || 0;
 
-    serviceStepper.querySelector(".stepper-text").textContent = bookingServicesList[currentServiceIdx].name;
-    vehicleStepper.querySelector(".stepper-text").textContent = bookingVehiclesList[currentVehicleIdx].name;
+    const selectedServiceName = bookingServicesList[currentServiceIdx];
+    const selectedVehicleDoc = bookingVehiclesList[currentVehicleIdx];
+    const selectedVehicleName = selectedVehicleDoc.vehicleType || "Unknown";
 
-    const calculatedRawTotal = bookingServicesList[currentServiceIdx].basePrice + bookingVehiclesList[currentVehicleIdx].premium;
-    
-    totalDisplay.textContent = "R " + Math.round(calculatedRawTotal)
-      .toLocaleString("en-ZA")
-      .replace(/,/g, " ");
+    serviceStepper.querySelector(".stepper-text").textContent = selectedServiceName;
+    vehicleStepper.querySelector(".stepper-text").textContent = selectedVehicleName;
+
+    let calculatedTotal = 0;
+
+    // 1. Fetch base rate from matrix
+    if (selectedVehicleDoc.servicePrices && selectedVehicleDoc.servicePrices.length > 0) {
+      const matchedPriceItem = selectedVehicleDoc.servicePrices.find(
+        item => item.serviceName?.trim().toLowerCase() === selectedServiceName?.trim().toLowerCase()
+      );
+      if (matchedPriceItem) {
+        calculatedTotal = matchedPriceItem.flatPrice || 0;
+      }
+    }
+
+    // 2. Apply discount logic if present in the document
+    const discount = selectedVehicleDoc.discountPercentage || 0;
+    if (discount > 0 && discount <= 100 && calculatedTotal > 0) {
+      calculatedTotal = calculatedTotal * (1 - (discount / 100));
+    }
+
+    if (calculatedTotal > 0) {
+      totalDisplay.textContent = "R " + Math.round(calculatedTotal)
+        .toLocaleString("en-ZA")
+        .replace(/,/g, " ");
+    } else {
+      totalDisplay.textContent = "R — —";
+    }
   }
 
   function executeStepSequence(clickEvent, targetStepperContainer, sourceDataArray) {
@@ -349,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function bindFormSubmission() {
+function bindFormSubmission() {
     const configForm = document.getElementById("studioConfigForm");
     if (!configForm) return;
 
@@ -368,29 +351,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const detailDate = document.getElementById("detailDate")?.value || "Not Provided";
       const detailTime = document.getElementById("detailTime")?.value || "Not Provided";
       
-      const selectedPackage = bookingServicesList[currentServiceIdx]?.name || "Not Selected";
-      const selectedVehicleTier = bookingVehiclesList[currentVehicleIdx]?.name || "Not Selected";
+      const selectedPackage = bookingServicesList[currentServiceIdx] || "Not Selected";
+      const selectedVehicleTier = bookingVehiclesList[currentVehicleIdx]?.vehicleType || "Not Selected";
       const finalPrice = totalDisplay?.textContent || "TBD";
 
+      // Re-ordered text parameters: Date up top, pricing down bottom
       const messageText = 
-        `*NEW SLOT RESERVATION*\n` +
+        `*NEW BOOKING RESERVATION*\n` +
+        `📅 *Date:* ${detailDate} @ ${detailTime}\n` +
         `----------------------------\n\n` +
-        `*Client:* ${clientName}\n` +
-        `*Contact:* ${clientPhone}\n\n` +
-        `*Service:* ${selectedPackage}\n` +
-        `*Vehicle:* ${selectedVehicleTier}\n\n` +
-        `*Date:* ${detailDate}\n` +
-        `*Time:* ${detailTime}\n\n` +
+        `👤 *Client Name:* ${clientName}\n` +
+        `📞 *Contact Number:* ${clientPhone}\n\n` +
+        `🚗 *Vehicle Type:* ${selectedVehicleTier}\n` +
+        `🧼 *Service Type:* ${selectedPackage}\n\n` +
         `----------------------------\n` +
-        `*Total Price:* ${finalPrice}\n\n` +
-        `_Please confirm availability to lock in this booking._`;
+        `💰 *Price:* ${finalPrice}\n\n` +
+        `_Please confirm availability to secure this slot._`;
 
-      const whatsappNumber = configForm.getAttribute('data-phone');
-
-      if (!whatsappNumber || whatsappNumber.includes("X")) {
-        alert("Configuration Error: Booking system phone destination target missing on Dashboard.");
-        return;
-      }
+      // Static target cellphone fallback parameter
+      const whatsappNumber = configForm.getAttribute('data-phone') || "27672754088";
 
       window.open(`https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(messageText)}`, "_blank");
     });
@@ -399,26 +378,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function setupScrollReveal() {
     const faqSection = document.getElementById('faqSection');
     if (!faqSection) return;
-
     const observer = new IntersectionObserver((entries, self) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('reveal-visible');
-          self.unobserve(entry.target); 
-        }
-      });
-    }, {
-      threshold: 0.12,
-      rootMargin: '0px 0px -40px 0px'
-    });
-
+      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('reveal-visible'); self.unobserve(entry.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     observer.observe(faqSection);
   }
 
   runPortfolioEngine();
 
   const yearContainer = document.getElementById('currentYearDisplay');
-  if (yearContainer) {
-    yearContainer.textContent = new Date().getFullYear();
-  }
+  if (yearContainer) yearContainer.textContent = new Date().getFullYear();
 });

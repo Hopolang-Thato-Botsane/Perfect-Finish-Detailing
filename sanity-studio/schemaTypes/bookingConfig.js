@@ -4,40 +4,46 @@ export default {
   type: 'document',
   fields: [
     {
-      name: 'whatsappNumber',
-      title: 'Target WhatsApp Number',
+      name: 'vehicleType',
+      title: 'Vehicle Type',
       type: 'string',
-      description: 'Include international prefix with no spaces, e.g., "278XXXXXXXX" for South Africa'
+      description: 'e.g., Hatchback, Sedan, Crossover, SUV/Bakkie'
     },
     {
-      name: 'services',
-      title: 'Service Options',
+      name: 'discountPercentage',
+      title: 'Active Discount Percentage (%)',
+      type: 'number',
+      description: 'Optional: Enter a number from 1 to 100 to apply a discount to this vehicle class (e.g., 10 for 10% off). Leave blank or 0 for normal pricing.',
+      validation: Rule => Rule.min(0).max(100)
+    },
+    {
+      name: 'servicePrices',
+      title: 'Service Type & Pricing Matrix',
       type: 'array',
+      description: 'Add your individual service rates for this vehicle type here.',
       of: [
         {
           type: 'object',
-          name: 'bookingService',
+          name: 'servicePriceItem',
           fields: [
-            { name: 'name', title: 'Package Name', type: 'string' },
-            { name: 'basePrice', title: 'Base Price (ZAR)', type: 'number' }
-          ]
-        }
-      ]
-    },
-    {
-      name: 'vehicles',
-      title: 'Vehicle Types',
-      type: 'array',
-      of: [
-        {
-          type: 'object',
-          name: 'bookingVehicle',
-          fields: [
-            { name: 'name', title: 'Vehicle Classification', type: 'string' },
-            { name: 'premium', title: 'Surcharge / Premium Price (ZAR)', type: 'number' }
+            { name: 'serviceName', title: 'Service Name', type: 'string' },
+            { name: 'flatPrice', title: 'Absolute Cost (ZAR)', type: 'number' }
           ]
         }
       ]
     }
-  ]
+  ],
+  preview: {
+    select: {
+      title: 'vehicleType',
+      subtitle: 'discountPercentage'
+    },
+    prepare(selection) {
+      const { title, subtitle } = selection;
+      return {
+        title: title || 'Unnamed Vehicle Type',
+        subtitle: subtitle ? `${subtitle}% Off Active` : 'Standard Pricing'
+      };
+    }
+  }
 }
