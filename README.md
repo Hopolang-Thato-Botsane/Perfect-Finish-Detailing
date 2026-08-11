@@ -56,7 +56,6 @@ By separating the content management engine (Sanity) from the presentation layer
 
 Developed with energy by [Thato Hopolang Botsane (THB)](https://github.com/hopolang-thato-botsane)
 
-# Perfect-Finish-Detailing
 
 ## Credits
 
