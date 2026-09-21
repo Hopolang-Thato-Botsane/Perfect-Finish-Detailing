@@ -81,14 +81,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function renderHeroSection(heroData) {
+function renderHeroSection(heroData) {
     const heroAssetContainer = document.getElementById('heroAssetContainer');
-    const brandingNode = document.getElementById('heroBrandingNode');
     const locationNode = document.getElementById('heroLocationNode');
     const titleNode = document.getElementById('heroTitleNode');
 
-    if (heroAssetContainer && heroData.bgUrl) heroAssetContainer.style.backgroundImage = `url('${heroData.bgUrl}')`;
-    if (brandingNode && heroData.branding) brandingNode.innerHTML = heroData.branding.replace(/\n/g, '<br>');
+    if (heroAssetContainer && heroData.bgUrl) {
+      heroAssetContainer.style.backgroundImage = `url('${heroData.bgUrl}')`;
+    }
     if (locationNode) locationNode.textContent = heroData.locationMarker || '';
     if (titleNode && heroData.mainHeading) titleNode.innerHTML = heroData.mainHeading.replace(/\n/g, '<br>');
   }
