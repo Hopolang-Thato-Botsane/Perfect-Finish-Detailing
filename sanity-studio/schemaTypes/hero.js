@@ -8,11 +8,11 @@ export default {
     //   type: 'string',
     //   title: 'Top Left Branding Title (e.g., Perfect Finish / Detailing)'
     // },
-    {
-      name: 'logoImage',
-      type: 'image',
-      title: 'Custom Brand Logo Graphic'
-    },
+    // {
+    //   name: 'logoImage',
+    //   type: 'image',
+    //   title: 'Custom Brand Logo Graphic'
+    // },
     {
       name: 'locationMarker',
       type: 'string',
