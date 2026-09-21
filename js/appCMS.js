@@ -89,6 +89,7 @@ function renderHeroSection(heroData) {
     if (heroAssetContainer && heroData.bgUrl) {
       heroAssetContainer.style.backgroundImage = `url('${heroData.bgUrl}')`;
     }
+
     if (locationNode) locationNode.textContent = heroData.locationMarker || '';
     if (titleNode && heroData.mainHeading) titleNode.innerHTML = heroData.mainHeading.replace(/\n/g, '<br>');
   }
