@@ -3,16 +3,16 @@ export default {
   type: 'document',
   title: 'Hero Configuration',
   fields: [
-    {
-      name: 'branding',
-      type: 'string',
-      title: 'Top Left Branding Title (e.g., Perfect Finish / Detailing)'
-    },
     // {
-    //   name: 'logoImage',
-    //   type: 'image',
-    //   title: 'Custom Brand Logo Graphic'
+    //   name: 'branding',
+    //   type: 'string',
+    //   title: 'Top Left Branding Title (e.g., Perfect Finish / Detailing)'
     // },
+    {
+      name: 'logoImage',
+      type: 'image',
+      title: 'Custom Brand Logo Graphic'
+    },
     {
       name: 'locationMarker',
       type: 'string',

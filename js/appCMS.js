@@ -1,11 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-  
   const PROJECT_ID = 'updvtxpq'; 
   const DATASET = 'production';
   const API_VERSION = 'v2026-06-13'; 
 
   let runtimeServicesCache = [];
-
   let bookingServicesList = [];
   let bookingVehiclesList = [];
 
@@ -45,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
       _id,
       question,
       answer
-    },
+    }
   }`);
   
   const URL = `https://${PROJECT_ID}.api.sanity.io/${API_VERSION}/data/query/${DATASET}?query=${QUERY}`;
@@ -74,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (result.bookingConfig && result.bookingConfig.length > 0) {
         initializeBookingEngine(result.bookingConfig);
       }
-      
 
       setupModalInteractions();
       setupScrollReveal();
@@ -152,7 +149,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function closePackageModal() {
     const modalBackdrop = document.getElementById('packageDetailsModal');
-    if (modalBackdrop) { modalBackdrop.classList.remove('is-active'); document.body.style.overflow = ''; }
+    if (modalBackdrop) { 
+      modalBackdrop.classList.remove('is-active'); 
+      document.body.style.overflow = ''; 
+    }
+  }
+
+  function populateModalData(data) {
+    const heroImg = document.getElementById('modalHeroImage');
+    const title = document.getElementById('modalPackageTitle');
+    const desc = document.getElementById('modalPackageDescription');
+    const stepsContainer = document.getElementById('modalStepsContainer');
+    const highlightsList = document.getElementById('modalHighlightsList');
+    const timeAlloc = document.getElementById('modalTimeAllocation');
+    const pricingMatrix = document.getElementById('modalPricingMatrix');
+
+    if (heroImg) { 
+      if (data.imageUrl) { 
+        heroImg.src = data.imageUrl; 
+        heroImg.alt = data.title || ''; 
+        heroImg.style.display = 'block'; 
+      } else { 
+        heroImg.style.display = 'none'; 
+      }
+    }
+    if (title) title.textContent = data.title || 'UNTITLED PACKAGE';
+    if (desc) desc.textContent = data.overview || data.cardDescription || '';
+    if (timeAlloc) timeAlloc.textContent = data.duration || 'TBD';
+
+    if (stepsContainer) {
+      stepsContainer.innerHTML = '';
+      if (data.processes && data.processes.length > 0) {
+        data.processes.forEach(step => {
+          const stepBlock = document.createElement('div');
+          stepBlock.className = 'process-item';
+          stepBlock.innerHTML = `<h5 class="process-item-title">${step.title || ''}</h5><p class="process-item-desc">${step.desc || ''}</p>`;
+          stepsContainer.appendChild(stepBlock);
+        });
+      }
+    }
+
+    if (highlightsList) {
+      highlightsList.innerHTML = '';
+      if (data.highlights && data.highlights.length > 0) {
+        data.highlights.forEach(t => { 
+          const li = document.createElement('li'); 
+          li.textContent = t; 
+          highlightsList.appendChild(li); 
+        });
+      }
+    }
+
+    if (pricingMatrix) {
+      pricingMatrix.innerHTML = `
+        <div class="price-tier"><span class="tier-label">Hatch</span><span class="tier-cost">${data.priceSm || 'TBD'}</span></div>
+        <div class="price-tier"><span class="tier-label">Sedan / SUV</span><span class="tier-cost">${data.priceLg || 'TBD'}</span></div>
+      `;
+    }
   }
 
   function renderFixedBentoGrid(config) {
@@ -189,50 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (slot2) slot2.innerHTML = generateCardHtml(config.card2);
     if (slot3) slot3.innerHTML = generateCardHtml(config.card3);
     if (slot4) slot4.innerHTML = generateCardHtml(config.card4);
-  }
-
-  function populateModalData(data) {
-    const heroImg = document.getElementById('modalHeroImage');
-    const title = document.getElementById('modalPackageTitle');
-    const desc = document.getElementById('modalPackageDescription');
-    const stepsContainer = document.getElementById('modalStepsContainer');
-    const highlightsList = document.getElementById('modalHighlightsList');
-    const timeAlloc = document.getElementById('modalTimeAllocation');
-    const pricingMatrix = document.getElementById('modalPricingMatrix');
-
-    if (heroImg) { 
-      if (data.imageUrl) { heroImg.src = data.imageUrl; heroImg.alt = data.title || ''; heroImg.style.display = 'block'; } 
-      else { heroImg.style.display = 'none'; }
-    }
-    if (title) title.textContent = data.title || 'UNTITLED PACKAGE';
-    if (desc) desc.textContent = data.overview || data.cardDescription || '';
-    if (timeAlloc) timeAlloc.textContent = data.duration || 'TBD';
-
-    if (stepsContainer) {
-      stepsContainer.innerHTML = '';
-      if (data.processes && data.processes.length > 0) {
-        data.processes.forEach(step => {
-          const stepBlock = document.createElement('div');
-          stepBlock.className = 'process-item';
-          stepBlock.innerHTML = `<h5 class="process-item-title">${step.title || ''}</h5><p class="process-item-desc">${step.desc || ''}</p>`;
-          stepsContainer.appendChild(stepBlock);
-        });
-      }
-    }
-
-    if (highlightsList) {
-      highlightsList.innerHTML = '';
-      if (data.highlights && data.highlights.length > 0) {
-        data.highlights.forEach(t => { const li = document.createElement('li'); li.textContent = t; highlightsList.appendChild(li); });
-      }
-    }
-
-    if (pricingMatrix) {
-      pricingMatrix.innerHTML = `
-        <div class="price-tier"><span class="tier-label">Hatch</span><span class="tier-cost">${data.priceSm || 'TBD'}</span></div>
-        <div class="price-tier"><span class="tier-label">Sedan / SUV</span><span class="tier-cost">${data.priceLg || 'TBD'}</span></div>
-      `;
-    }
   }
 
   function renderFaqAccordion(faqArray) {
@@ -276,17 +285,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (!isExpanded) {
-        currentItem.classList.add('is-expanded'); trigger.setAttribute('aria-expanded', 'true');
+        currentItem.classList.add('is-expanded'); 
+        trigger.setAttribute('aria-expanded', 'true');
         answerContainer.style.maxHeight = innerContent.scrollHeight + 'px';
       } else {
-        currentItem.classList.remove('is-expanded'); trigger.setAttribute('aria-expanded', 'false');
+        currentItem.classList.remove('is-expanded'); 
+        trigger.setAttribute('aria-expanded', 'false');
         answerContainer.style.maxHeight = '0';
       }
     });
   }
 
   function initializeBookingEngine(configDataArray) {
-
     bookingVehiclesList = configDataArray;
 
     const uniqueServiceNames = new Set();
@@ -304,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bindFormSubmission();
   }
 
-function renderCalculationState() {
+  function renderCalculationState() {
     const serviceStepper = document.getElementById("serviceStepper");
     const vehicleStepper = document.getElementById("vehicleStepper");
     const totalDisplay = document.querySelector(".config-total-display");
@@ -324,7 +334,6 @@ function renderCalculationState() {
 
     let calculatedTotal = 0;
 
-    // 1. Fetch base rate from matrix
     if (selectedVehicleDoc.servicePrices && selectedVehicleDoc.servicePrices.length > 0) {
       const matchedPriceItem = selectedVehicleDoc.servicePrices.find(
         item => item.serviceName?.trim().toLowerCase() === selectedServiceName?.trim().toLowerCase()
@@ -334,7 +343,6 @@ function renderCalculationState() {
       }
     }
 
-    // 2. Apply discount logic if present in the document
     const discount = selectedVehicleDoc.discountPercentage || 0;
     if (discount > 0 && discount <= 100 && calculatedTotal > 0) {
       calculatedTotal = calculatedTotal * (1 - (discount / 100));
@@ -369,17 +377,19 @@ function renderCalculationState() {
     const serviceStepper = document.getElementById("serviceStepper");
     const vehicleStepper = document.getElementById("vehicleStepper");
 
-    if (serviceStepper) {
+    if (serviceStepper && !serviceStepper.dataset.bound) {
       serviceStepper.addEventListener("click", (e) => executeStepSequence(e, serviceStepper, bookingServicesList));
+      serviceStepper.dataset.bound = "true";
     }
-    if (vehicleStepper) {
+    if (vehicleStepper && !vehicleStepper.dataset.bound) {
       vehicleStepper.addEventListener("click", (e) => executeStepSequence(e, vehicleStepper, bookingVehiclesList));
+      vehicleStepper.dataset.bound = "true";
     }
   }
 
   function bindFormSubmission() {
     const configForm = document.getElementById("studioConfigForm");
-    if (!configForm) return;
+    if (!configForm || configForm.dataset.bound) return;
 
     configForm.addEventListener("submit", (e) => {
       e.preventDefault(); 
@@ -416,13 +426,20 @@ function renderCalculationState() {
 
       window.open(`https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(messageText)}`, "_blank");
     });
+
+    configForm.dataset.bound = "true";
   }
 
   function setupScrollReveal() {
     const faqSection = document.getElementById('faqSection');
     if (!faqSection) return;
     const observer = new IntersectionObserver((entries, self) => {
-      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('reveal-visible'); self.unobserve(entry.target); } });
+      entries.forEach(entry => { 
+        if (entry.isIntersecting) { 
+          entry.target.classList.add('reveal-visible'); 
+          self.unobserve(entry.target); 
+        } 
+      });
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     observer.observe(faqSection);
   }

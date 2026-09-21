@@ -4,94 +4,93 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalDisplay = document.querySelector(".config-total-display");
   const configForm = document.getElementById("studioConfigForm");
 
-  let services = [];
-  let vehicles = [];
 
-  async function initConfigurator() {
-    try {
-      const response = await fetch("./configurator-data.json");
-      
-      if (!response.ok) {
-        throw new Error(`HTTP network error! Status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      services = data.services;
-      vehicles = data.vehicles;
+  const configuratorData = {
+    "services": [
+      { "name": "Enhancement + Interior", "basePrice": 6000 },
+      { "name": "Paint Enhancement", "basePrice": 4500 },
+      { "name": "Concours Elite", "basePrice": 8500 }
+    ],
+    "vehicles": [
+      { "name": "Hatchback", "premium": 0 },
+      { "name": "Sedan", "premium": 250 },
+      { "name": "SUV / Large", "premium": 500 },
+      { "name": "Bakkie / Truck", "premium": 600 }
+    ]
+  };
 
-      renderCalculationState();
-      bindStepperInteractions();
-      bindFormSubmission();
-
-    } catch (error) {
-      console.error("Configurator failed to initialize data streams:", error);
-      if (totalDisplay) totalDisplay.textContent = "R --";
-    }
-  }
+  const services = configuratorData.services;
+  const vehicles = configuratorData.vehicles;
 
   function renderCalculationState() {
     if (!serviceStepper || !vehicleStepper || !totalDisplay) return;
-    if (!services.length || !vehicles.length) return;
 
-    const currentServiceIdx = parseInt(serviceStepper.dataset.index) || 0;
-    const currentVehicleIdx = parseInt(vehicleStepper.dataset.index) || 0;
+    let currentServiceIdx = parseInt(serviceStepper.dataset.index, 10) || 0;
+    let currentVehicleIdx = parseInt(vehicleStepper.dataset.index, 10) || 0;
 
-    serviceStepper.querySelector(".stepper-text").textContent = services[currentServiceIdx].name;
-    vehicleStepper.querySelector(".stepper-text").textContent = vehicles[currentVehicleIdx].name;
+    // Boundary checks
+    if (currentServiceIdx >= services.length) currentServiceIdx = 0;
+    if (currentVehicleIdx >= vehicles.length) currentVehicleIdx = 0;
 
-    const calculatedRawTotal = services[currentServiceIdx].basePrice + vehicles[currentVehicleIdx].premium;
-    const localizedPriceString = "R " + Math.round(calculatedRawTotal)
+    const selectedService = services[currentServiceIdx];
+    const selectedVehicle = vehicles[currentVehicleIdx];
+
+    const serviceTextNode = serviceStepper.querySelector(".stepper-text");
+    const vehicleTextNode = vehicleStepper.querySelector(".stepper-text");
+
+    if (serviceTextNode) serviceTextNode.textContent = selectedService.name;
+    if (vehicleTextNode) vehicleTextNode.textContent = selectedVehicle.name;
+
+    const calculatedRawTotal = selectedService.basePrice + selectedVehicle.premium;
+    
+    totalDisplay.textContent = "R " + Math.round(calculatedRawTotal)
       .toLocaleString("en-ZA")
       .replace(/,/g, " ");
-    totalDisplay.textContent = localizedPriceString;
   }
 
   function executeStepSequence(clickEvent, targetStepperContainer, sourceDataArray) {
-    let activeIndex = parseInt(targetStepperContainer.dataset.index) || 0;
-    const triggerBtn = clickEvent.target;
+    const triggerBtn = clickEvent.target.closest(".next, .prev");
+    if (!triggerBtn) return;
+
+    let activeIndex = parseInt(targetStepperContainer.dataset.index, 10) || 0;
 
     if (triggerBtn.classList.contains("next")) {
       activeIndex = (activeIndex + 1) % sourceDataArray.length;
     } else if (triggerBtn.classList.contains("prev")) {
       activeIndex = (activeIndex - 1 + sourceDataArray.length) % sourceDataArray.length;
-    } else {
-      return; 
     }
 
-    targetStepperContainer.dataset.index = activeIndex;
+    targetStepperContainer.dataset.index = activeIndex.toString();
     renderCalculationState();
   }
 
-  function bindStepperInteractions() {
-    if (serviceStepper) {
-      serviceStepper.addEventListener("click", (e) => {
-        executeStepSequence(e, serviceStepper, services);
-      });
-    }
-
-    if (vehicleStepper) {
-      vehicleStepper.addEventListener("click", (e) => {
-        executeStepSequence(e, vehicleStepper, vehicles);
-      });
-    }
+  // Bind steppers once
+  if (serviceStepper && !serviceStepper.dataset.bound) {
+    serviceStepper.addEventListener("click", (e) => executeStepSequence(e, serviceStepper, services));
+    serviceStepper.dataset.bound = "true";
   }
 
-  function bindFormSubmission() {
-    if (!configForm) return;
+  if (vehicleStepper && !vehicleStepper.dataset.bound) {
+    vehicleStepper.addEventListener("click", (e) => executeStepSequence(e, vehicleStepper, vehicles));
+    vehicleStepper.dataset.bound = "true";
+  }
 
+  // Bind form submission once
+  if (configForm && !configForm.dataset.bound) {
     configForm.addEventListener("submit", (e) => {
       e.preventDefault(); 
 
-      const currentServiceIdx = parseInt(serviceStepper.dataset.index) || 0;
-      const currentVehicleIdx = parseInt(vehicleStepper.dataset.index) || 0;
-      const clientName = document.getElementById("clientName")?.value || "Not Provided";
-      const clientPhone = document.getElementById("clientPhone")?.value || "Not Provided";
+      const currentServiceIdx = parseInt(serviceStepper.dataset.index, 10) || 0;
+      const currentVehicleIdx = parseInt(vehicleStepper.dataset.index, 10) || 0;
+
+      const clientName = document.getElementById("clientName")?.value.trim() || "Not Provided";
+      const clientPhone = document.getElementById("clientPhone")?.value.trim() || "Not Provided";
       const detailDate = document.getElementById("detailDate")?.value || "Not Provided";
       const detailTime = document.getElementById("detailTime")?.value || "Not Provided";
+
       const selectedPackage = services[currentServiceIdx]?.name || "Not Selected";
       const selectedVehicleTier = vehicles[currentVehicleIdx]?.name || "Not Selected";
-      const finalPrice = totalDisplay.textContent;
+      const finalPrice = totalDisplay?.textContent || "TBD";
 
       const messageText = 
         `*NEW SLOT RESERVATION*\n` +
@@ -106,20 +105,20 @@ document.addEventListener("DOMContentLoaded", () => {
         `*Total Price:* ${finalPrice}\n\n` +
         `_Please confirm availability to lock in this booking._`;
 
-      const whatsappNumber = configForm.dataset.phone;
+      const parentSection = configForm.closest("section");
+      const whatsappNumber = configForm.dataset.phone || parentSection?.dataset.phone;
 
       if (!whatsappNumber || whatsappNumber.includes("X")) {
-        console.error("WhatsApp routing failed: Please provide a valid cell number target on the form element attribute.");
-        alert("Configuration Error: Booking system phone destination target missing.");
+        alert("Configuration Error: WhatsApp destination phone number missing.");
         return;
       }
 
-      const encodedMessage = encodeURIComponent(messageText);
-      const whatsappGatewayUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMessage}`;
-
-      window.open(whatsappGatewayUrl, "_blank");
+      window.open(`https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(messageText)}`, "_blank");
     });
+
+    configForm.dataset.bound = "true";
   }
 
-  initConfigurator();
+  // Initial render pass
+  renderCalculationState();
 });

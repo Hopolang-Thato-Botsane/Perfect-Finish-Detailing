@@ -2,7 +2,8 @@
   position: relative;
   width: 100%;
   height: 100vh;
-  background-color: var(--bg-main);
+  background-color: var(--bg-main, #0A0A0A);
+  background-image: url('/public/heroBanner.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -16,11 +17,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    180deg, 
-    rgba(10, 10, 10, 0.5) 0%, 
-    rgba(10, 10, 10, 0.92) 100%
-  );
+  background: rgba(10, 10, 10, 0.45);
   z-index: 1;
 }
 
@@ -30,7 +27,7 @@
   height: 100%;
   max-width: 87.5rem;
   margin: 0 auto;
-  padding: var(--space-xl) var(--space-xl) var(--space-huge); 
+  padding: var(--space-xl, 2.5rem) var(--space-xl, 2.5rem) var(--space-lg, 2rem); 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -39,47 +36,121 @@
 }
 
 .hero-branding {
-  font-family: var(--font-body);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  line-height: 1.4;
-  color: var(--text-pure);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-top: var(--space-md);
+  display: flex;
+  align-items: center;
+  margin-top: var(--space-xs, 0.5rem);
+}
+
+.hero-brand-logo {
+  height: 2.5rem;
+  width: auto;
+  max-width: 85vw;
+  object-fit: contain;
+  display: block;
 }
 
 .hero-headline-block {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 0.5rem;
   width: 100%;
-  max-width: 65rem;
+  max-width: 45rem;
+  margin-bottom: var(--space-md, 1.5rem);
 }
 
 .location-tag {
-  font-family: var(--font-body);
-  font-size: 0.8125rem;
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  color: #CCCCCC;
   text-transform: uppercase;
-  margin-bottom: var(--space-xs);
 }
 
 .hero-main-title {
-  font-family: var(--font-display);
-  font-size: clamp(2.5rem, 6.5vw, 4.75rem); 
+  font-family: var(--font-display, system-ui, sans-serif);
+  font-size: clamp(1.85rem, 3.5vw, 3.125rem); 
   font-weight: 800;
-  color: var(--text-pure);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  color: var(--text-pure, #FFFFFF);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
   white-space: pre-line;
 }
 
+.hero-scroll-indicator {
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.hero-scroll-indicator:hover {
+  opacity: 1;
+  transform: translateY(2px);
+}
+
+.mouse-icon {
+  width: 1.35rem;
+  height: 2.15rem;
+  border: 2px solid #D4AF37;
+  border-radius: 1rem;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: 0.35rem;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+}
+
+.mouse-wheel {
+  width: 0.3rem;
+  height: 0.5rem;
+  background-color: #D4AF37;
+  border-radius: 0.15rem;
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.6);
+  animation: scrollBobGold 1.6s infinite ease-in-out;
+}
+
+.scroll-text {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #D4AF37;
+  letter-spacing: 0.04em;
+  text-transform: capitalize;
+}
+
+@keyframes scrollBobGold {
+  0% { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: translateY(7px); 
+    opacity: 0.25; 
+  }
+  100% { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
 @media (max-width: 48rem) {
   .hero-interface-frame {
-    padding: var(--space-xl) var(--space-md);
+    padding: var(--space-md, 1.25rem);
+  }
+
+@media (max-width: 48rem) {
+  .hero-brand-logo {
+    height: 2.25rem; 
+  }
+}
+
+  .hero-headline-block {
+    margin-bottom: var(--space-xs, 0.5rem);
   }
 }
