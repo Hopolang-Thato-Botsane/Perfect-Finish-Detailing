@@ -8,42 +8,41 @@ document.addEventListener('DOMContentLoaded', () => {
   let bookingVehiclesList = [];
 
   const QUERY = encodeURIComponent(`{
-    "hero": *[_type == "hero"][0]{
-      branding,
-      locationMarker,
-      mainHeading,
-      "bgUrl": backgroundImage.asset->url
-    },
-    "services": *[_type == "service"] | order(_createdAt asc) {
-      idCode,
-      title,
-      cardDescription,
-      overview,
-      duration,
-      highlights,
-      priceSm,
-      priceLg,
-      "imageUrl": image.asset->url,
-      processes[] { title, desc }
-    },
-    "benefitsConfig": *[_type == "benefitsConfig"][0]{
-      sectionTitle,
-      sectionSubtitle,
-      card1 { index, tag, heading, description },
-      card2 { index, tag, heading, description },
-      card3 { index, tag, heading, description },
-      card4 { index, tag, heading, description }
-    },
-    "bookingConfig": *[_type == "bookingConfig"] {
-      vehicleType,
-      discountPercentage,
-      servicePrices
-    },
-    "faqs": *[_type == "faq"] | order(orderWeight asc) {
-      _id,
-      question,
-      answer
-    }
+      "hero": *[_type == "hero"][0]{
+        locationMarker,
+        mainHeading,
+        "bgUrl": backgroundImage.asset->url
+      },
+      "services": *[_type == "service"] | order(_createdAt asc) {
+        idCode,
+        title,
+        cardDescription,
+        overview,
+        duration,
+        highlights,
+        priceSm,
+        priceLg,
+        "imageUrl": image.asset->url,
+        processes[] { title, desc }
+      },
+      "benefitsConfig": *[_type == "benefitsConfig"][0]{
+        sectionTitle,
+        sectionSubtitle,
+        card1 { index, tag, heading, description },
+        card2 { index, tag, heading, description },
+        card3 { index, tag, heading, description },
+        card4 { index, tag, heading, description }
+      },
+      "bookingConfig": *[_type == "bookingConfig"] {
+        vehicleType,
+        discountPercentage,
+        servicePrices
+      },
+      "faqs": *[_type == "faq"] | order(orderWeight asc) {
+        _id,
+        question,
+        answer
+      }
   }`);
   
   const URL = `https://${PROJECT_ID}.api.sanity.io/${API_VERSION}/data/query/${DATASET}?query=${QUERY}`;
